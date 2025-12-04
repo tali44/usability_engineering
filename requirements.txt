@@ -1,0 +1,5 @@
+pandas
+wikipedia-api
+tantivy
+requests
+dotenv

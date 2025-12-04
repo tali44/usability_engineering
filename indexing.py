@@ -26,7 +26,6 @@ import requests
 import os
 from itertools import islice
 from dotenv import load_dotenv
-import trailer
 
 
 # Basis-URLs für TMDB-Requests
