@@ -28,11 +28,17 @@ from itertools import islice
 from dotenv import load_dotenv
 
 
-# Basis-URLs für TMDB-Requests
+# Basis-URLs für SteamDB-Requests
 STEAM_API = "https://store.steampowered.com/api/appdetails?appids="
 
 #Umgebungsvariablen laden
 load_dotenv()
+
+# HTTP-Header inkl. Bearer-Token für SteamDB (siehe Sicherheitshinweis oben)
+headers = {
+    "accept": "application/json",
+    "Authorization": os.getenv("STEAM_DB_API_KEY")
+}
 
 # === 1) Schema für den Index definieren ===
 schema_builder = SchemaBuilder()
