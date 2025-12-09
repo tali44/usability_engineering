@@ -29,52 +29,24 @@ from dotenv import load_dotenv
 
 
 # Basis-URLs für TMDB-Requests
-TMDB_API = "https://api.themoviedb.org/3/find/"
-TMDB_TRAILER_API = "https://api.themoviedb.org/3/tv/"
-SOURCE = "?external_source=imdb_id"  # Parameter, um via IMDb-ID zu suchen
+STEAM_API = "https://store.steampowered.com/api/appdetails?appids="
 
 #Umgebungsvariablen laden
 load_dotenv()
 
-# HTTP-Header inkl. Bearer-Token für TMDB (siehe Sicherheitshinweis oben)
-headers = {
-    "accept": "application/json",
-    "Authorization": os.getenv('TMDB_API_KEY')
-}
-
 # === 1) Schema für den Index definieren ===
-# Textfelder
 schema_builder = SchemaBuilder()
-schema_builder.add_text_field("wikidata", stored=True)
-schema_builder.add_text_field("url", stored=True)
+schema_builder.add_integer_field("id", stored=True, indexed=True)
 schema_builder.add_text_field("title", stored=True, tokenizer_name='en_stem')
 schema_builder.add_text_field("description", stored=True, tokenizer_name='en_stem')  # Mehrwertiges Textfeld
-schema_builder.add_text_field("image", stored=True)
-schema_builder.add_text_field("locations", stored=True)
-schema_builder.add_text_field("countries", stored=True)
+schema_builder.add_text_field("description_short", stored=True, tokenizer_name='en_stem')  # Mehrwertiges Textfeld
 schema_builder.add_text_field("genres", stored=True)
-schema_builder.add_text_field("tmdb_overview", stored=True, tokenizer_name='en_stem')
-schema_builder.add_text_field("tmdb_poster_path", stored=True)
+schema_builder.add_text_field("publisher", stored=True)
+schema_builder.add_text_field("platforms", stored=True)
+schema_builder.add_text_field("url", stored=True)
+schema_builder.add_text_field("image", stored=True)
 schema_builder.add_text_field("trailer", stored=True)
-
-# Integer-Felder
-schema_builder.add_integer_field("id", stored=True, indexed=True)
-schema_builder.add_integer_field("follower", stored=True, fast=True)
-schema_builder.add_integer_field("score", stored=True, fast=True)
-schema_builder.add_integer_field("start", stored=True, fast=True)
-schema_builder.add_integer_field("tmdb_genre_ids", stored=True, indexed=True)
-schema_builder.add_integer_field("tmdb_vote_count", stored=True, fast=True)
-
-# Float-Felder
-schema_builder.add_float_field("tmdb_popularity", stored=True, fast=True)
-schema_builder.add_float_field("tmdb_vote_average", stored=True, fast=True)
-
-# Facet-Felder (für hierarchische Filter/Navigation)
-schema_builder.add_facet_field("facet_locations")
-schema_builder.add_facet_field("facet_countries")
-schema_builder.add_facet_field("facet_genres")
-
-# Schema finalisieren
+schema_builder.add_date_field("release_date", stored=True)
 schema = schema_builder.build()
 
 # === 2) Index anlegen/öffnen ===
@@ -100,73 +72,86 @@ wiki.session = session
 
 # === 4) CSVs einlesen ===
 file = 'steamID.csv'  # Pfad zur SteamID-Liste (muss existieren)
-
 data = pd.read_csv(file)
 
+# === 5) Dokumente aufbauen und in den Index schreiben ===
+# islice(..., 10) beschränkt auf die ersten 10 Einträge – bei Bedarf anpassen/entfernen
 
 # for index, row in islice data.iterrows(): # für alle zeilen (kann nen bissl dauern)
 for index, row in islice(data.iterrows(), 10):
-    # Wikipedia-Titel aus der URL extrahieren und decodieren
-    path = urlparse(row["wikipediaPage"]).path
-    title_encoded = path.split("/")[-1]
-    title = unquote(title_encoded).replace("_", " ")
-    # Klammern (inkl. Inhalt) entfernen, um robustere Titel zu erhalten
-    clean_title = re.sub(r"\s*\(.*?\)", "", title).strip()
+    # Neues Tantivy-Dokument
+    doc = Document()
+    print(index)
+    
+    doc.add_integer("id", index)
 
-    # Wikipedia-Seite abrufen
-    page = wiki.page(title)
-    if page.exists():
-        print(index)
-        try:
-            # Neues Tantivy-Dokument
-            doc = Document()
+    # === STEAM_DB-Abfragen (auf Basis der STEAM-ID) ===
+    try:
+        response = requests.get(STEAM_API + row["SteamID"], headers=headers)
+        steamdb_json = json.loads(response.text)
 
-            # Pflicht-/Basisfelder
-            doc.add_integer("id", index)
-            doc.add_text("wikidata", row["series"])  # Serien-ID/Name aus den CSVs
-            doc.add_text("url", row["wikipediaPage"])  # Wikipedia-URL
-            doc.add_text("title", row["seriesLabel"])  # Anzeigename/Titel
-            doc.add_text("description", page.summary)   # Wikipedia-Zusammenfassung
+        # Prüfen, ob Spiel-Ergebnisse vorhanden sind (wir nehmen das erste)
+        if steamdb_json.get("game_results"):
+            steamdb = steamdb_json["game_results"][0]
 
-            # Optionale numerische Felder, nur wenn Werte vorhanden sind
-            if pd.notna(row["follower"]):
-                doc.add_integer("follower", int(row["follower"]))
-            if pd.notna(row["score"]):
-                doc.add_integer("score", int(row["score"]))
+            # titel
+            if steamdb.get("name"):
+                name = steamdb.get("name")
+                doc.add_text("titel", name)
 
-            # Optionales Bild (z. B. aus Wikidata/CSV)
-            if pd.notna(row["image"]) and row["image"].strip() != "":
-                doc.add_text("image", row["image"])
+            # description
+            if steamdb.get("detailed_description"):
+                description = steamdb.get("detailed_description")
+                doc.add_text("description", description)
 
-            # Startjahr/Startzeit (als Integer gespeichert)
-            doc.add_integer("start", int(row["startTime"]))
+            # description - short
+            if steamdb.get("short_description"):
+                short_description = steamdb.get("short_description")
+                doc.add_text("description_short", short_description)
+            
+            # genres
+            if steamdb.get("genres"):
+                genres = steamdb.get("genres")
+                doc.add_text("genres", genres)
 
-            # Mehrwertige Felder + Facets für Filterung (Orte, Länder, Genres)
-            if pd.notna(row["locations"]):
-                for location in str(row["locations"]).split(", "):
-                    doc.add_text("locations", location)
-                    doc.add_facet("facet_locations", Facet.from_string(f"/{location.strip().strip('/')}"))
+            # publisher
+            if steamdb.get("publishers"):
+                publisher = steamdb.get("publishers")
+                doc.add_text("publisher", publisher)
 
-            if pd.notna(row["countries"]):
-                for country in str(row["countries"]).split(", "):
-                    doc.add_text("countries", country)
-                    doc.add_facet("facet_countries", Facet.from_string(f"/{country.strip().strip('/')}"))
+            # platform
+            if steamdb.get("platforms"):
+                platforms = steamdb.get("platforms")
+                doc.add_text("platforms", platforms)      
 
-            if pd.notna(row["genres"]):
-                for genre in str(row["genres"]).split(", "):
-                    doc.add_text("genres", genre)
-                    doc.add_facet("facet_genres", Facet.from_string(f"/{genre.strip().strip('/')}"))
+            # url
+            if steamdb.get("website"):
+                url = steamdb.get("website")
+                doc.add_text("url", url) 
 
-            # Fertiges Dokument in den Index schreiben
-            writer.add_document(doc)
+            # image
+            if steamdb.get("publishers"):
+                publisher = steamdb.get("publishers")
+                doc.add_text("publisher", publisher) 
 
-        except Exception as e:
-            # Falls etwas schiefgeht: überspringen, aber Fehlermeldung ausgeben
-            print(f"{e} Something went wrong. Skipping series")
+            # trailer
+            if steamdb.get("movies"):
+                trailer = steamdb.get("movies")
+                doc.add_text("trailer", trailer) 
 
-    else:
-        # Wikipedia-Seite existiert nicht – Eintrag überspringen
-        print(str(index) + " Page does not exist.")
+            # release_date
+            if steamdb.get("release_date"):
+                release_date = steamdb.get("release_date")
+                doc.add_date("release_date", release_date) 
+
+        else:
+            print("No game results found.")
+    except Exception as e:
+        # Fehler in der STEAM_DB-Abfrage protokollieren, Indexierung dennoch fortsetzen
+        print("STEAM_DB Error")
+
+    # Fertiges Dokument in den Index schreiben
+    writer.add_document(doc)
 
 # === 6) Index-Änderungen finalisieren ===
 writer.commit()                 # Schreibvorgänge bestätigen
