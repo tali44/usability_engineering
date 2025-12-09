@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Dieses Skript liest Seriendaten aus CSV-Dateien, ruft ergänzende
-Informationen von Wikipedia und The Movie Database (TMDB) ab und
+Dieses Skript liest Videospieldaten aus CSV-Dateien, ruft basierend auf
+den Steam-IDs von Wikipedia und weitere Informationen von Steam ab und
 indexiert alles mit Tantivy, um eine durchsuchbare Volltext-Indizestruktur
 zu erstellen.
 
@@ -99,18 +99,10 @@ wiki = wikipediaapi.Wikipedia(language='en', user_agent=custom_user_agent)
 wiki.session = session
 
 # === 4) CSVs einlesen ===
-file_path = 'series.csv'  # Pfad zur Serienliste (muss existieren)
-imdb_path = "imdb.csv"   # Pfad zur IMDb-Tabelle (muss existieren)
+file = 'steamID.csv'  # Pfad zur SteamID-Liste (muss existieren)
 
-data_incomplete = pd.read_csv(file_path)
-imdb = pd.read_csv(imdb_path)
+data = pd.read_csv(file)
 
-# DataFrames anhand der Spalte 'series' zusammenführen (inner join)
-data = pd.merge(data_incomplete, imdb, on='series', how='inner')
-df = pd.DataFrame(data)  # optional: falls weitere Pandas-Operationen geplant sind
-
-# === 5) Dokumente aufbauen und in den Index schreiben ===
-# islice(..., 10) beschränkt auf die ersten 10 Einträge – bei Bedarf anpassen/entfernen
 
 # for index, row in islice data.iterrows(): # für alle zeilen (kann nen bissl dauern)
 for index, row in islice(data.iterrows(), 10):
@@ -164,56 +156,6 @@ for index, row in islice(data.iterrows(), 10):
                 for genre in str(row["genres"]).split(", "):
                     doc.add_text("genres", genre)
                     doc.add_facet("facet_genres", Facet.from_string(f"/{genre.strip().strip('/')}"))
-
-            # === TMDB-Abfragen (auf Basis der IMDb-ID) ===
-            try:
-                response = requests.get(TMDB_API + row["imdb"] + SOURCE, headers=headers)
-                tmdb_json = json.loads(response.text)
-
-                # Prüfen, ob TV-Ergebnisse vorhanden sind (wir nehmen das erste)
-                if tmdb_json.get("tv_results"):
-                    tmdb = tmdb_json["tv_results"][0]
-
-                    # Optional: Inhaltsangabe/Overview
-                    if tmdb.get("overview"):
-                        tmdb_overview = tmdb.get("overview")
-                        doc.add_text("tmdb_overview", tmdb_overview)
-
-                    # Optional: Posterpfad
-                    if tmdb.get("poster_path"):
-                        tmdb_poster_path = tmdb.get("poster_path")
-                        doc.add_text("tmdb_poster_path", tmdb_poster_path)
-
-                    # Optional: Genre-IDs (mehrwertig als Integers)
-                    if tmdb.get("genre_ids"):
-                        for genre in tmdb.get("genre_ids"):
-                            doc.add_integer("tmdb_genre_ids", genre)
-
-                    # Popularität & Bewertungen (Floats/Integers)
-                    if tmdb.get("popularity"):
-                        tmdb_popularity = tmdb.get("popularity")
-                        doc.add_float("tmdb_popularity", tmdb_popularity)
-                    if tmdb.get("vote_average"):
-                        tmdb_vote_average = tmdb.get("vote_average")
-                        doc.add_float("tmdb_vote_average", tmdb_vote_average)
-                    if tmdb.get("vote_count"):
-                        tmdb_vote_count = tmdb.get("vote_count")
-                        doc.add_integer("tmdb_vote_count", tmdb_vote_count)
-
-                    # Trailer-Key über zusätzliche TMDB-API (Videos) ermitteln                          ---- brauchen wir nicht, trailer in steam enthalten
-                    #video_response = requests.get(
-                    #    TMDB_TRAILER_API + str(tmdb.get("id", "")) + "/videos",headers=headers
-                    #)
-                    #key = trailer.get_key(video_response.text)
-                    #if isinstance(key, str):
-                    #    doc.add_text("trailer", key)
-                    #print(video_response.text)
-
-                else:
-                    print("No TV results found.")
-            except Exception as e:
-                # Fehler in der TMDB-Abfrage protokollieren, Indexierung dennoch fortsetzen
-                print("TMDB Error")
 
             # Fertiges Dokument in den Index schreiben
             writer.add_document(doc)
