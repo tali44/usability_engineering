@@ -36,13 +36,11 @@ load_dotenv()
 
 # HTTP-Header inkl. Bearer-Token für SteamDB (siehe Sicherheitshinweis oben)
 headers = {
-    "accept": "application/json",
-    "Authorization": os.getenv("STEAM_DB_API_KEY")
+    "accept": "application/json"
 }
 
 # === 1) Schema für den Index definieren ===
 schema_builder = SchemaBuilder()
-schema_builder.add_integer_field("id", stored=True, indexed=True)
 schema_builder.add_text_field("title", stored=True, tokenizer_name='en_stem')
 schema_builder.add_text_field("description", stored=True, tokenizer_name='en_stem')  # Mehrwertiges Textfeld
 schema_builder.add_text_field("description_short", stored=True, tokenizer_name='en_stem')  # Mehrwertiges Textfeld
@@ -67,20 +65,17 @@ index_path = pathlib.Path(index_path)
 index = Index(schema, path=str(index_path))
 writer = index.writer()  # Writer für Batch-Schreibvorgänge
 
-# === 3) Wikipedia-Client mit Session und User-Agent ===
-custom_user_agent = "MyWikipediaBot/1.0 (https://example.com; myemail@example.com)"
-session = requests.Session()
-session.headers.update({'User-Agent': custom_user_agent})
-
-# Wikipedia-API-Objekt; Session explizit zuweisen, um Rate Limits zu respektieren
-wiki = wikipediaapi.Wikipedia(language='en', user_agent=custom_user_agent)
-wiki.session = session
-
-# === 4) CSVs einlesen ===
+# === 3) CSVs einlesen ===
 file = 'steamID.csv'  # Pfad zur SteamID-Liste (muss existieren)
 data = pd.read_csv(file)
 
-# === 5) Dokumente aufbauen und in den Index schreiben ===
+print(data)
+
+for steam_id in data:
+    id_str = str(steam_id)
+    print (id_str)
+
+# === 4) Dokumente aufbauen und in den Index schreiben ===
 # islice(..., 10) beschränkt auf die ersten 10 Einträge – bei Bedarf anpassen/entfernen
 
 # for index, row in islice data.iterrows(): # für alle zeilen (kann nen bissl dauern)
@@ -89,11 +84,10 @@ for index, row in islice(data.iterrows(), 10):
     doc = Document()
     print(index)
     
-    doc.add_integer("id", index)
-
     # === STEAM_DB-Abfragen (auf Basis der STEAM-ID) ===
     try:
         response = requests.get(STEAM_API + row["SteamID"], headers=headers)
+        print(id_str)
         steamdb_json = json.loads(response.text)
 
         # Prüfen, ob Spiel-Ergebnisse vorhanden sind (wir nehmen das erste)
@@ -159,6 +153,6 @@ for index, row in islice(data.iterrows(), 10):
     # Fertiges Dokument in den Index schreiben
     writer.add_document(doc)
 
-# === 6) Index-Änderungen finalisieren ===
+# === 5) Index-Änderungen finalisieren ===
 writer.commit()                 # Schreibvorgänge bestätigen
 writer.wait_merging_threads()   # Hintergrund-Mergeprozesse abwarten
