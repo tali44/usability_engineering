@@ -1,0 +1,10 @@
+{    
+    'movie_results': [], 'person_results': [], 'tv_results': [
+        {'adult': False, 'backdrop_path': '/5LIJTWULWWng6aykngK3qMldJus.jpg', 'id': 114819, 'name': 'Dafne and the Rest', 'original_name': 'Todo lo otro', 'overview': 'Dafne and her friends are a bunch of thirty-somethings living dissatisfied lives. Frustrated in love and sex, they work in lousy jobs, trying to find themselves, and some love, in Madrid.', 'poster_path': '/uL2lp8bo8SnOdCzmRJDSEgZiUVW.jpg', 'media_type': 'tv', 'original_language': 'es', 'genre_ids': [
+                35,
+                18
+            ], 'popularity': 8.65, 'first_air_date': '2021-10-26', 'vote_average': 4.889, 'vote_count': 18, 'origin_country': ['ES'
+            ]
+        }
+    ], 'tv_episode_results': [], 'tv_season_results': []
+}

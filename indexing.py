@@ -86,66 +86,70 @@ for index, row in islice(data.iterrows(), 10):
     
     # === STEAM_DB-Abfragen (auf Basis der STEAM-ID) ===
     try:
-        response = requests.get(STEAM_API + row["SteamID"], headers=headers)
+        response = requests.get(STEAM_API + id_str, headers=headers)
         print(id_str)
-        steamdb_json = json.loads(response.text)
 
-        # Prüfen, ob Spiel-Ergebnisse vorhanden sind (wir nehmen das erste)
-        if steamdb_json.get("game_results"):
-            steamdb = steamdb_json["game_results"][0]
+        steam_json = json.loads(response.text)
+        data = steam_json[id_str]["data"]
 
-            # titel
-            if steamdb.get("name"):
-                name = steamdb.get("name")
-                doc.add_text("titel", name)
 
-            # description
-            if steamdb.get("detailed_description"):
-                description = steamdb.get("detailed_description")
-                doc.add_text("description", description)
+        if steam_json.get("tv_results"):
+            tmdb = steam_json["tv_results"][0]
 
-            # description - short
-            if steamdb.get("short_description"):
-                short_description = steamdb.get("short_description")
-                doc.add_text("description_short", short_description)
-            
-            # genres
-            if steamdb.get("genres"):
-                genres = steamdb.get("genres")
-                doc.add_text("genres", genres)
+            # Optional: Inhaltsangabe/Overview
+            if tmdb.get("overview"):
+                tmdb_overview = tmdb.get("overview")
+                doc.add_text("tmdb_overview", tmdb_overview)
 
-            # publisher
-            if steamdb.get("publishers"):
-                publisher = steamdb.get("publishers")
-                doc.add_text("publisher", publisher)
 
-            # platform
-            if steamdb.get("platforms"):
-                platforms = steamdb.get("platforms")
-                doc.add_text("platforms", platforms)      
 
-            # url
-            if steamdb.get("website"):
-                url = steamdb.get("website")
-                doc.add_text("url", url) 
 
-            # image
-            if steamdb.get("publishers"):
-                publisher = steamdb.get("publishers")
-                doc.add_text("publisher", publisher) 
+        #titel
+        name = data["name"]
+        doc.add_text("titel", name)
+        print("Name:" + name)
 
-            # trailer
-            if steamdb.get("movies"):
-                trailer = steamdb.get("movies")
-                doc.add_text("trailer", trailer) 
+        #description
+        description = data["detailed_description"]
+        doc.add_text("description", description)
+        print("Beschreibung:" + description)
 
-            # release_date
-            if steamdb.get("release_date"):
-                release_date = steamdb.get("release_date")
-                doc.add_date("release_date", release_date) 
+        # description - short
+        short_description = data["short_description"]
+        doc.add_text("description_short", short_description)
+        print("Short:" + short_description)
+        
+        # # genres
+        # genres = data["genres"]
+        # doc.add_text("genres", genres)
+        # print("Genres:" + genres)
 
-        else:
-            print("No game results found.")
+        # # publisher
+        # publisher = data["publishers"]
+        # doc.add_text("publisher", publisher)
+        # print("Publisher:" + publisher)
+
+        # # platform
+        # platforms = data["platforms"]
+        # doc.add_text("platforms", platforms)      
+
+        # url
+        url = data["website"]
+        doc.add_text("url", url) 
+        print("URL:" + url)
+
+        # image
+        image = data["header_image"]
+        doc.add_text("image", image) 
+
+        # trailer
+        trailer = data["movies"]
+        doc.add_text("trailer", trailer) 
+
+        # release_date
+        release_date = data["release_date"]
+        doc.add_date("release_date", release_date)
+        
     except Exception as e:
         # Fehler in der STEAM_DB-Abfrage protokollieren, Indexierung dennoch fortsetzen
         print("STEAM_DB Error")
