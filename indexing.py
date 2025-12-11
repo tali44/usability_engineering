@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-Dieses Skript liest Videospieldaten aus CSV-Dateien, ruft basierend auf
-den Steam-IDs von Wikipedia und weitere Informationen von Steam ab und
-indexiert alles mit Tantivy, um eine durchsuchbare Volltext-Indizestruktur
-zu erstellen.
+Dieses Skript liest die Steam-ID aus einer CSV-Dateien, ruft basierend auf
+den IDs Informationen von der SteamDB ab und indexiert alles mit Tantivy,
+um eine durchsuchbare Volltext-Indizestruktur zu erstellen.
 
 Hauptschritte:
 1) Schema für den Tantivy-Index definieren.
 2) Index-Verzeichnis erstellen und Writer initialisieren.
-3) Wikipedia‑Client mit benutzerdefiniertem User‑Agent aufsetzen.
-4) CSV‑Daten (Serien + IMDb) einlesen und mergen.
-5) Für jede Serie: Wikipedia-Seite laden, TMDB-Daten per API ergänzen,
-   Dokument zusammenstellen und in den Index schreiben.
-6) Änderungen committen und Merge-Threads abwarten.
+3) CSV‑Daten (steamID) einlesen.
+4) Für jede Serie: SteamDB-Daten ergänzen, Dokument zusammenstellen und in den Index schreiben.
+5) Änderungen committen und Merge-Threads abwarten.
 """
 
 import pandas as pd
@@ -34,7 +31,7 @@ STEAM_API = "https://store.steampowered.com/api/appdetails?appids="
 #Umgebungsvariablen laden
 load_dotenv()
 
-# HTTP-Header inkl. Bearer-Token für SteamDB (siehe Sicherheitshinweis oben)
+# HTTP-Header inkl. Bearer-Token für SteamDB
 headers = {
     "accept": "application/json"
 }
@@ -79,7 +76,7 @@ for steam_id in data:
 # islice(..., 10) beschränkt auf die ersten 10 Einträge – bei Bedarf anpassen/entfernen
 
 # for index, row in islice data.iterrows(): # für alle zeilen (kann nen bissl dauern)
-for index, row in islice(data.iterrows(), 10):
+for index, row in islice(data.iterrows(), 5):
     # Neues Tantivy-Dokument
     doc = Document()
     print(index)
@@ -92,23 +89,11 @@ for index, row in islice(data.iterrows(), 10):
         steam_json = json.loads(response.text)
         data = steam_json[id_str]["data"]
 
-
-        if steam_json.get("tv_results"):
-            tmdb = steam_json["tv_results"][0]
-
-            # Optional: Inhaltsangabe/Overview
-            if tmdb.get("overview"):
-                tmdb_overview = tmdb.get("overview")
-                doc.add_text("tmdb_overview", tmdb_overview)
-
-
-
-
         #titel
         name = data["name"]
         doc.add_text("titel", name)
         print("Name:" + name)
-
+        
         #description
         description = data["detailed_description"]
         doc.add_text("description", description)
@@ -119,19 +104,19 @@ for index, row in islice(data.iterrows(), 10):
         doc.add_text("description_short", short_description)
         print("Short:" + short_description)
         
-        # # genres
-        # genres = data["genres"]
-        # doc.add_text("genres", genres)
-        # print("Genres:" + genres)
+        # genres
+        genres = data["genres"]
+        doc.add_text("genres", genres)
+        print("Genres:" + genres)
 
-        # # publisher
-        # publisher = data["publishers"]
-        # doc.add_text("publisher", publisher)
-        # print("Publisher:" + publisher)
+        # publisher
+        publisher = data["publishers"]
+        doc.add_text("publisher", publisher)
+        print("Publisher:" + publisher)
 
-        # # platform
-        # platforms = data["platforms"]
-        # doc.add_text("platforms", platforms)      
+        # platform
+        platforms = data["platforms"]
+        doc.add_text("platforms", platforms)      
 
         # url
         url = data["website"]
@@ -140,15 +125,18 @@ for index, row in islice(data.iterrows(), 10):
 
         # image
         image = data["header_image"]
-        doc.add_text("image", image) 
+        doc.add_text("image", image)
+        print("Bild:" + image)
 
         # trailer
         trailer = data["movies"]
-        doc.add_text("trailer", trailer) 
+        doc.add_text("trailer", trailer)
+        print("Trailer:" + trailer)
 
         # release_date
         release_date = data["release_date"]
         doc.add_date("release_date", release_date)
+        print("Datum:" + release_date)
         
     except Exception as e:
         # Fehler in der STEAM_DB-Abfrage protokollieren, Indexierung dennoch fortsetzen
