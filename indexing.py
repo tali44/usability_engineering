@@ -66,11 +66,6 @@ writer = index.writer()  # Writer für Batch-Schreibvorgänge
 file = 'steamID.csv'  # Pfad zur SteamID-Liste (muss existieren)
 data = pd.read_csv(file)
 
-print(data)
-
-for steam_id in data:
-    id_str = str(steam_id)
-    print (id_str)
 
 # === 4) Dokumente aufbauen und in den Index schreiben ===
 # islice(..., 10) beschränkt auf die ersten 10 Einträge – bei Bedarf anpassen/entfernen
@@ -79,15 +74,16 @@ for steam_id in data:
 for index, row in islice(data.iterrows(), 5):
     # Neues Tantivy-Dokument
     doc = Document()
-    print(index)
     
     # === STEAM_DB-Abfragen (auf Basis der STEAM-ID) ===
     try:
-        response = requests.get(STEAM_API + id_str, headers=headers)
-        print(id_str)
+        print(row.get("steamid"))
+        response = requests.get(STEAM_API + str(row.get("steamid")), headers=headers)
+        #print(response.text)
 
         steam_json = json.loads(response.text)
-        data = steam_json[id_str]["data"]
+        data = steam_json[str(row.get("steamid"))]["data"]
+        #print(data)
 
         #titel
         name = data["name"]
@@ -106,41 +102,42 @@ for index, row in islice(data.iterrows(), 5):
         
         # genres
         genres = data["genres"]
-        doc.add_text("genres", genres)
-        print("Genres:" + genres)
+        for genre in genres:
+            doc.add_text("genres", genre)
+        #print("Genres:" + genres)
 
-        # publisher
-        publisher = data["publishers"]
-        doc.add_text("publisher", publisher)
-        print("Publisher:" + publisher)
+        # # publisher
+        # publisher = data["publishers"]
+        # doc.add_text("publisher", publisher)
+        # print("Publisher:" + publisher)
 
-        # platform
-        platforms = data["platforms"]
-        doc.add_text("platforms", platforms)      
+        # # platform
+        # platforms = data["platforms"]
+        # doc.add_text("platforms", platforms)      
 
-        # url
-        url = data["website"]
-        doc.add_text("url", url) 
-        print("URL:" + url)
+        # # url
+        # url = data["website"]
+        # doc.add_text("url", url) 
+        # print("URL:" + url)
 
-        # image
-        image = data["header_image"]
-        doc.add_text("image", image)
-        print("Bild:" + image)
+        # # image
+        # image = data["header_image"]
+        # doc.add_text("image", image)
+        # print("Bild:" + image)
 
-        # trailer
-        trailer = data["movies"]
-        doc.add_text("trailer", trailer)
-        print("Trailer:" + trailer)
+        # # trailer
+        # trailer = data["movies"]
+        # doc.add_text("trailer", trailer)
+        # print("Trailer:" + trailer)
 
-        # release_date
-        release_date = data["release_date"]
-        doc.add_date("release_date", release_date)
-        print("Datum:" + release_date)
+        # # release_date
+        # release_date = data["release_date"]
+        # doc.add_date("release_date", release_date)
+        # print("Datum:" + release_date)
         
     except Exception as e:
         # Fehler in der STEAM_DB-Abfrage protokollieren, Indexierung dennoch fortsetzen
-        print("STEAM_DB Error")
+        print(str(e))
 
     # Fertiges Dokument in den Index schreiben
     writer.add_document(doc)
