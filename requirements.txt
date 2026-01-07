@@ -4,4 +4,5 @@ pandas
 wikipedia-api
 tantivy
 requests
+streamlit
 dotenv
