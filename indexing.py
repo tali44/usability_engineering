@@ -114,7 +114,7 @@ for index, row in islice(data.iterrows(), 500):
         # platform
         platforms = data["platforms"]
         for platform in platforms:
-            doc.add_text("platforms", platform)   # ich bekomme alle 3 plattformen (windows, limkux, mac) - aber nicht den true/false wert
+            doc.add_text("platforms", platform)   # ich bekomme alle 3 plattformen (windows, linux, mac) - aber nicht den true/false wert
 
         # url
         url = data["website"]

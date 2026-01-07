@@ -75,7 +75,7 @@ if view == "detail" and selected_id:
     st.stop()
 
 # Hauptseite
-st.title("TV-Serien")
+st.title("Video Spiele")
 
 # Verarbeitet die aktuelle Anfrage (Query);
 query_text = st.text_input("Suchbegriff eingeben", value=q, placeholder="z. B. Sea of Thieves, The Witcher, etc. ...")
