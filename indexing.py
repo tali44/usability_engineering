@@ -36,6 +36,7 @@ headers = {
 
 # === 1) Schema für den Index definieren ===
 schema_builder = SchemaBuilder()
+schema_builder.add_integer_field("id", stored=True, indexed=True)
 schema_builder.add_text_field("title", stored=True, tokenizer_name='en_stem')
 schema_builder.add_text_field("description", stored=True, tokenizer_name='en_stem')  # Mehrwertiges Textfeld
 schema_builder.add_text_field("description_short", stored=True, tokenizer_name='en_stem')  # Mehrwertiges Textfeld
@@ -69,7 +70,7 @@ data = pd.read_csv(file)
 # islice(..., 10) beschränkt auf die ersten 10 Einträge – bei Bedarf anpassen/entfernen
 
 #for index, row in islice data.iterrows(): # für alle zeilen (kann nen bissl dauern)
-for index, row in islice(data.iterrows(), 500):
+for index, row in islice(data.iterrows(), 100):
     # Neues Tantivy-Dokument
     doc = Document()
     # === STEAM_DB-Abfragen (auf Basis der STEAM-ID) ===
@@ -82,11 +83,18 @@ for index, row in islice(data.iterrows(), 500):
         data = steam_json[str(row.get("steamid"))]["data"]
         #print(data)
 
+        #id
+        doc.add_integer("id", index)
+        print("ID:" + str(index))
+
         #titel
         name = data["name"]
         doc.add_text("titel", name)
         print("Name:" + name)
-        
+        # if name is None:
+        #     print(data)
+        #     raise ValueError()
+
         #description
         description = data["detailed_description"]
         doc.add_text("description", description)
