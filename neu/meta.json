@@ -13,6 +13,16 @@
       "segment_id": "655caae9-d8f3-4813-98e4-ca14920bb693",
       "max_doc": 100,
       "deletes": null
+    },
+    {
+      "segment_id": "0b337c51-23b2-4c18-ba38-ff56736218ca",
+      "max_doc": 1,
+      "deletes": null
+    },
+    {
+      "segment_id": "96aa20a4-7fcc-4f8e-b622-1276a0609aff",
+      "max_doc": 1,
+      "deletes": null
     }
   ],
   "schema": [
@@ -155,5 +165,5 @@
       }
     }
   ],
-  "opstamp": 216
+  "opstamp": 220
 }

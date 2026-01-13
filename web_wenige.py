@@ -82,23 +82,23 @@ if view == "detail" and selected_id:
 # Hauptseite
 st.title("Video Spiele")
 
-items = [10,25,33,42,102,111,124,298]
-random_cards_html = []
-for item in items:
-    q_t = index.parse_query(str(item), ["id"])
-    random_hits = searcher.search(q_t, 1).hits
-    if random_hits:
-        random_score, random_address = random_hits[0]
-        random_doc = searcher.doc(random_address)
-        print(random_doc, type(random_doc))
-        random_title = random_doc["title"][0]
-        random_poster = random_doc["tmdb_poster_path"]
-        if random_poster:
-            random_href = f"?view=detail&id={str(item)}&q={up.quote(q, safe='')}"
-            #random_img_url = TMDB_PATH + random_poster[0]
-            #random_img_tag = f'<img src="{random_img_url}" loading="lazy" alt="poster">'
-            #random_cards_html.append(f"""<a class="card" href="{random_href}" target="_self">{random_img_tag}<div class="t">{random_title}</div></a>""")
-utils.display_random_items(random_cards_html)
+# items = [10,25,33,42,102,111,124,298]
+# random_cards_html = []
+# for item in items:
+#     q_t = index.parse_query(str(item), ["id"])
+#     random_hits = searcher.search(q_t, 1).hits
+#     if random_hits:
+#         random_score, random_address = random_hits[0]
+#         random_doc = searcher.doc(random_address)
+#         print(random_doc, type(random_doc))
+#         random_title = random_doc["title"][0]
+#         random_poster = random_doc["tmdb_poster_path"]
+#         if random_poster:
+#             random_href = f"?view=detail&id={str(item)}&q={up.quote(q, safe='')}"
+#             #random_img_url = TMDB_PATH + random_poster[0]
+#             #random_img_tag = f'<img src="{random_img_url}" loading="lazy" alt="poster">'
+#             #random_cards_html.append(f"""<a class="card" href="{random_href}" target="_self">{random_img_tag}<div class="t">{random_title}</div></a>""")
+# utils.display_random_items(random_cards_html)
 
 # Verarbeitet die aktuelle Anfrage (Query);
 query_text = st.text_input("Suchbegriff eingeben", value=q, placeholder="z. B. Sea of Thieves, The Witcher, etc. ...")
@@ -112,7 +112,7 @@ if st.button("Suchen", type="primary"):
 
 # Raster (Grid) darstellen, wenn q existiert
 if q:
-    query = Query.term_query(schema, "title", q)
+    query = Query.term_query(schema, "description_short", q)
     hits = searcher.search(query, TOP_K).hits
 
     if not hits:
@@ -125,8 +125,8 @@ if q:
         for score, addr in hits:
             doc = searcher.doc(addr)
             doc_id = doc["id"][0]
-            title = doc["title"][0]
-            poster = doc["tmdb_poster_path"]
+            title = doc["description_short"][0]
+            #poster = doc["tmdb_poster_path"]
             #poster_url = (TMDB_PATH_SMALL + poster[0]) if poster else ""
             href = f"?view=detail&id={doc_id}&q={q}"
             #img_tag = f'<img src="{poster_url}" loading="lazy" alt="poster">' if poster_url else ""
