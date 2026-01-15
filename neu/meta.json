@@ -5,8 +5,18 @@
   },
   "segments": [
     {
-      "segment_id": "5adcb271-7205-4c0a-bff3-f1c77cd95ee6",
-      "max_doc": 100,
+      "segment_id": "f7117616-d7e0-4700-b400-b2d93bb91968",
+      "max_doc": 8,
+      "deletes": null
+    },
+    {
+      "segment_id": "d631de4d-f5b6-43eb-813d-4e830afa258c",
+      "max_doc": 1,
+      "deletes": null
+    },
+    {
+      "segment_id": "b63e7b0b-fe5f-4a24-a23b-ffdc9f4c12a7",
+      "max_doc": 1,
       "deletes": null
     }
   ],
@@ -126,6 +136,19 @@
       }
     },
     {
+      "name": "trailer",
+      "type": "text",
+      "options": {
+        "indexing": {
+          "record": "position",
+          "fieldnorms": true,
+          "tokenizer": "default"
+        },
+        "stored": true,
+        "fast": false
+      }
+    },
+    {
       "name": "release_date",
       "type": "date",
       "options": {
@@ -137,5 +160,5 @@
       }
     }
   ],
-  "opstamp": 108
+  "opstamp": 41
 }

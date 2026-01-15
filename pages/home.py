@@ -2,6 +2,7 @@ import streamlit as st
 import urllib.parse as up
 from typing import Any
 from tantivy import Query, Index, SchemaBuilder
+from streamlit.components.v1 import html
 
 # Konstanten
 INDEX_PATH = "neu"  # bestehendes Tantivy-Index-Verzeichnis
@@ -19,7 +20,7 @@ schema_builder.add_text_field("publisher", stored=True)
 schema_builder.add_text_field("platforms", stored=True)
 schema_builder.add_text_field("url", stored=True)
 schema_builder.add_text_field("image", stored=True)
-#schema_builder.add_text_field("trailer", stored=True)
+schema_builder.add_text_field("trailer", stored=True)
 schema_builder.add_date_field("release_date", stored=True)
 schema = schema_builder.build()
 
@@ -31,6 +32,7 @@ with open("styles.html", "r") as f:
     css = f.read()
 
 st.markdown(css, unsafe_allow_html=True)
+
 
 # Hilfsfunktion für Seitenrouting mit Anfrageparametern.
 # Gibt die Query-Parameter der aktuellen Seite als Dictionary zurück.
@@ -61,7 +63,7 @@ if view == "detail" and selected_id:
     img = doc["image"]
     image_url = (img[0]) if img else ""
     url = doc["url"][0] if doc["url"] else "keine Angabe"
-    trailer = doc["trailer"][0] if doc["trailer"] else ""
+    trailer = doc["trailer"][0] if doc["trailer"] else None
     date = doc["release_date"][0] if doc["release_date"] else "keine Angabe"
 
     if publisher is not None:
@@ -89,9 +91,64 @@ if view == "detail" and selected_id:
         st.rerun()
     
 
+
     st.title(title)
     st.image(image_url)
-    #st.video(trailer)
+
+    if trailer is not None:
+        html(f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded Video Player</title>
+    <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet">
+    <style>
+        body {{
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 800px;
+            height: 400px;
+            background: #000;
+        }}
+
+        .video-js {{
+            width: 100%;
+            height: 100%;
+            max-height: 400px;
+        }}
+    </style>
+</head>
+<body>
+<script src="https://vjs.zencdn.net/8.5.2/video.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<video id="video-player" class="video-js vjs-default-skin" controls preload="auto">
+        <track id="subtitle-track" kind="subtitles" label="English" srclang="en" default>
+</video>
+<script>
+const player = videojs('video-player', {{
+            autoplay: true,
+            muted: false,
+            controls: true,
+            preload: 'auto',
+            playbackRates: [0.5, 1, 1.5, 2],
+            fluid: false,
+            crossOrigin: 'anonymous',
+        }});
+if (Hls.isSupported()) {{
+            player.src({{
+                src: "{trailer}",
+                type: 'application/x-mpegURL'
+            }});
+        }} else {{
+            alert('Your browser does not support HLS playback.');
+        }}
+</script>
+</body>
+</html>""", height=400, width=800)
     
     st.set_page_config(layout="wide")
 

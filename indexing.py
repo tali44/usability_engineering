@@ -43,11 +43,11 @@ schema_builder.add_text_field("publisher", stored=True)
 schema_builder.add_text_field("platforms", stored=True)
 schema_builder.add_text_field("url", stored=True)
 schema_builder.add_text_field("image", stored=True)
-#schema_builder.add_text_field("trailer", stored=True)
+schema_builder.add_text_field("trailer", stored=True)
 schema_builder.add_date_field("release_date", stored=True)
 schema = schema_builder.build()
 
-# === 2) Index anlegen/öffnen ===
+# === 2) Index anlegen/öffnen ===S
 index_path = "neu"  # Relativer Pfad für das Index-Verzeichnis
 if not os.path.exists(index_path):
     os.makedirs(index_path)
@@ -69,7 +69,7 @@ data = pd.read_csv(file)
 # islice(..., 10) beschränkt auf die ersten 10 Einträge – bei Bedarf anpassen/entfernen
 
 #for index, row in islice data.iterrows(): # für alle zeilen (kann nen bissl dauern)
-for index, row in islice(data.iterrows(), 100):
+for index, row in data[:10].iterrows():
     # Neues Tantivy-Dokument
     doc = Document()
 
@@ -142,13 +142,12 @@ for index, row in islice(data.iterrows(), 100):
         if release_date is not None:
             doc.add_text("release_date", release_date["date"])
 
-
-
-        # # trailer
-        # trailers = data["movies"]
-        # for trailer in trailers:
-        #     doc.add_text("trailer", trailer["dash_av1"])         # link zu mpd datei, kann nicht über st.video angezeigt werden
-                
+        # trailer
+        trailers:list[dict] = data["movies"]
+        if trailers is not None:
+            trailers = [t for t in trailers if t["highlight"]]
+            doc.add_text("trailer", trailers[0]["hls_h264"])
+                    
     except Exception as e:
         # Fehler in der STEAM_DB-Abfrage protokollieren, Indexierung dennoch fortsetzen
         print(str(e))
