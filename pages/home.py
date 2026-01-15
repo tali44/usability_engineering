@@ -55,7 +55,7 @@ if view == "detail" and selected_id:
     doc = searcher.doc(address)
 
 
-    #title= doc["title"][0]
+    title= doc["title"][0]
     description = doc["description"][0] if doc["description"] else "keine Angabe"
     genres = doc["genres"] if doc["genres"] else "keine Angabe"
     publisher = doc["publisher"] if doc["publisher"] else "keine Agabe"
@@ -91,7 +91,7 @@ if view == "detail" and selected_id:
         st.rerun()
     
 
-    st.title("title")
+    st.title(title)
     st.image(image_url)
     #st.video(trailer)
     
@@ -141,8 +141,7 @@ if st.button("Suchen", type="primary"):
 
 # Raster (Grid) darstellen, wenn q existiert
 if q:
-    #query = Query.term_query(schema, "title", q)
-    query = Query.term_query(schema, "description", q)
+    query = Query.term_query(schema, "title", q)
     hits = searcher.search(query, TOP_K).hits
 
     if not hits:
@@ -155,16 +154,13 @@ if q:
         for score, addr in hits:
             doc = searcher.doc(addr)
             doc_id = doc["id"][0]
-            #title = doc["title"]
-            t = doc.get_all("titel")
-            print("Dokument:", t)
+            title = doc["title"]
             img = doc["image"]
             image_url = (img[0]) if img else ""
             description_short = doc["description_short"][0] if doc["description_short"] else ""
             href = f"?view=detail&id={doc_id}&q={q}"
             img_tag = f'<img src="{image_url}" loading="lazy" alt="poster">' if image_url else ""
-            #cards_html.append(f'<a class="card" href="{href}"target="_self">{img_tag}<div class="t">{description_short }</div></a>')
-            cards_html.append(f'<a class="card" href="{href}"target="_self">{img_tag}<div class="t">{t}</div></a>')
+            cards_html.append(f'<a class="card" href="{href}"target="_self">{img_tag}<div class="t">{title }</div></a>')
         cards_html.append("</div>")
         st.markdown("".join(cards_html), unsafe_allow_html=True)
 else:
