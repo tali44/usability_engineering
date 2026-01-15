@@ -129,7 +129,7 @@ if view == "detail" and selected_id:
 st.title("Video Spiele")
 
 # Verarbeitet die aktuelle Anfrage (Query);
-query_text = st.text_input("Suchbegriff eingeben", value=q, placeholder="z. B. Sea of Thieves, The Witcher, etc. ...")
+query_text = st.text_input("", value=q, placeholder="z. B. Sea of Thieves, The Witcher, etc. ...")
 if st.button("Suchen", type="primary"):
     if not query_text:
         st.info("Bitte gib einen Suchbegriff ein.")
