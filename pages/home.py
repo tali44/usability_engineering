@@ -129,7 +129,7 @@ if view == "detail" and selected_id:
 st.title("Video Spiele")
 
 # Verarbeitet die aktuelle Anfrage (Query);
-query_text = st.text_input("Suchbegriff eingeben", value=q, placeholder="z. B. Sea of Thieves, The Witcher, etc. ...")
+query_text = st.text_input("", value=q, placeholder="z. B. Sea of Thieves, The Witcher, etc. ...")
 if st.button("Suchen", type="primary"):
     if not query_text:
         st.info("Bitte gib einen Suchbegriff ein.")
@@ -153,7 +153,7 @@ if q:
         for score, addr in hits:
             doc = searcher.doc(addr)
             doc_id = doc["id"][0]
-            title = doc["title"]
+            title = doc["title"][0]
             img = doc["image"]
             image_url = (img[0]) if img else ""
             description_short = doc["description_short"][0] if doc["description_short"] else ""

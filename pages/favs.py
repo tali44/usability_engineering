@@ -1,3 +1,3 @@
 import streamlit as st
 
-st.title("Favoriten")
+st.title("Favoriten der Redaktion")
