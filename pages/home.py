@@ -21,7 +21,7 @@ schema_builder.add_text_field("publisher", stored=True)
 schema_builder.add_text_field("platforms", stored=True)
 schema_builder.add_text_field("url", stored=True)
 schema_builder.add_text_field("image", stored=True)
-schema_builder.add_text_field("trailer", stored=True)
+#schema_builder.add_text_field("trailer", stored=True)
 schema_builder.add_date_field("release_date", stored=True)
 schema = schema_builder.build()
 
@@ -104,10 +104,9 @@ if view == "detail" and selected_id:
     st.session_state["text"] = None
 
     with col1:
-        #st.text(trailer)
         st.markdown(description, unsafe_allow_html=True)
         
-
+        
     with col2:
         st.text("Genres:")
         st.markdown(genre_html, unsafe_allow_html=True)
