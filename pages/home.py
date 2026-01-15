@@ -3,8 +3,6 @@ import urllib.parse as up
 from typing import Any
 from tantivy import Query, Index, SchemaBuilder
 
-import utils
-
 # Konstanten
 INDEX_PATH = "neu"  # bestehendes Tantivy-Index-Verzeichnis
 TOP_K = 20          # wie viele Ergebnisse angezeigt werden sollen
