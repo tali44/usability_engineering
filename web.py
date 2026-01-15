@@ -8,8 +8,7 @@ import utils
 # Konstanten
 INDEX_PATH = "neu"  # bestehendes Tantivy-Index-Verzeichnis
 TOP_K = 20          # wie viele Ergebnisse angezeigt werden sollen
-CARDS_PER_PAGE = 3  # Cards, die in der zufälligen Anzeige auftauchen
-
+CARDS_PER_PAGE = 3 # Cards, die in der zufälligen Anzeige auftauchen
 
 
 schema_builder = SchemaBuilder()
@@ -52,26 +51,28 @@ if view == "detail" and selected_id:
     hits = searcher.search(q_t, limit= 1).hits
     score, address = hits[0]
     doc = searcher.doc(address)
-    title = doc["title"][0]
-    overview_src = doc["tmdb_overview"] or doc["description"] or ""
-    overview = overview_src[0]
-    trailer = doc["trailer"]
-    genres = doc["genres"]
-    video_key = trailer[0] if trailer else ""
+    #title= doc["title"][0]
+    description_short = doc["description_short"][0] if doc["description_short"] else ""
+    st.text(description_short)
+    #overview_src = doc["tmdb_overview"] or doc["description"] or ""
+    #overview = overview_src[0]
+    #trailer = doc["trailer"]
+    #genres = doc["genres"]
+    #video_key = trailer[0] if trailer else ""
     
-    if genres is not None:
-        tags_html = "<div>"
-        for tag in genres:
-            tags_html += f'<span class="tag">{tag}</span>'
-        tags_html += "</div>"
+    #if genres is not None:
+    #    tags_html = "<div>"
+    #    for tag in genres:
+    #        tags_html += f'<span class="tag">{tag}</span>'
+    #    tags_html += "</div>"
     
     
 
-    st.title(title)
-    st.markdown(tags_html, unsafe_allow_html=True)
-    st.text(overview)
-    if video_key != "":
-        st.video(f"https://www.youtube.com/watch?v={video_key}")
+    #st.title(title)
+    #st.markdown(tags_html, unsafe_allow_html=True)
+    #st.text(overview)
+    #if video_key != "":
+    #    st.video(f"https://www.youtube.com/watch?v={video_key}")
 
     if st.button("Zurück zur Übersicht"):
         st.query_params.update({view: "grid"})
@@ -91,14 +92,14 @@ st.title("Video Spiele")
 #         random_score, random_address = random_hits[0]
 #         random_doc = searcher.doc(random_address)
 #         print(random_doc, type(random_doc))
-#         random_title = random_doc["title"][0]
-#         random_poster = random_doc["tmdb_poster_path"]
-#         if random_poster:
-#             random_href = f"?view=detail&id={str(item)}&q={up.quote(q, safe='')}"
+#         random_title = random_doc["description_short"][0] if random_doc["description_short"] else "" # Leeren String speichern, falls das Feld nicht befüllt ist.
+#         #random_poster = random_doc["tmdb_poster_path"]
+#         #if random_poster:
+#             #random_href = f"?view=detail&id={str(item)}&q={up.quote(q, safe='')}"
 #             #random_img_url = TMDB_PATH + random_poster[0]
 #             #random_img_tag = f'<img src="{random_img_url}" loading="lazy" alt="poster">'
 #             #random_cards_html.append(f"""<a class="card" href="{random_href}" target="_self">{random_img_tag}<div class="t">{random_title}</div></a>""")
-# utils.display_random_items(random_cards_html)
+# utils.display_random_items(random_title)
 
 # Verarbeitet die aktuelle Anfrage (Query);
 query_text = st.text_input("Suchbegriff eingeben", value=q, placeholder="z. B. Sea of Thieves, The Witcher, etc. ...")
@@ -112,7 +113,8 @@ if st.button("Suchen", type="primary"):
 
 # Raster (Grid) darstellen, wenn q existiert
 if q:
-    query = Query.term_query(schema, "title", q)
+    #query = Query.term_query(schema, "title", q)
+    query = Query.term_query(schema, "description", q)
     hits = searcher.search(query, TOP_K).hits
 
     if not hits:
@@ -125,12 +127,13 @@ if q:
         for score, addr in hits:
             doc = searcher.doc(addr)
             doc_id = doc["id"][0]
-            title = doc["title"][0]
-            poster = doc["tmdb_poster_path"]
+            #title = doc["title"][0]
+            #poster = doc["tmdb_poster_path"]
             #poster_url = (TMDB_PATH_SMALL + poster[0]) if poster else ""
+            description_short = doc["description_short"][0] if doc["description_short"] else ""
             href = f"?view=detail&id={doc_id}&q={q}"
             #img_tag = f'<img src="{poster_url}" loading="lazy" alt="poster">' if poster_url else ""
-            #cards_html.append(f'<a class="card" href="{href}">{img_tag}<div class="t">{title}</div></a>')
+            cards_html.append(f'<a class="card" href="{href}"><div class="t">{description_short }</div></a>')
         cards_html.append("</div>")
         st.markdown("".join(cards_html), unsafe_allow_html=True)
 else:

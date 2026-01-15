@@ -14,7 +14,7 @@ Hauptschritte:
 
 import pandas as pd
 from urllib.parse import urlparse, unquote
-from tantivy import SchemaBuilder, Index, Document
+from tantivy import SchemaBuilder, Index, Document, Query, Occur
 import pathlib
 import json
 import requests
@@ -70,7 +70,7 @@ data = pd.read_csv(file)
 # islice(..., 10) beschränkt auf die ersten 10 Einträge – bei Bedarf anpassen/entfernen
 
 #for index, row in islice data.iterrows(): # für alle zeilen (kann nen bissl dauern)
-for index, row in islice(data.iterrows(), 2):
+for index, row in islice(data.iterrows(), 10):
     # Neues Tantivy-Dokument
     doc = Document()
     # === STEAM_DB-Abfragen (auf Basis der STEAM-ID) ===
@@ -88,61 +88,61 @@ for index, row in islice(data.iterrows(), 2):
         print("ID:" + str(index))
 
         #titel
-        name = data["name"]
-        doc.add_text("titel", name)
-        print("Name:" + name)
+        titel = data["name"]
+        doc.add_text("titel", titel)
+        print("Name:" + titel)
         t = doc.get_all("titel")
         print("Dokument:", t)
 
-        # #description
-        # description = data["detailed_description"]
-        # doc.add_text("description", description)
-        # print("Beschreibung:" + description)
+        #description
+        description = data["detailed_description"]
+        doc.add_text("description", description)
+        print("Beschreibung:" + description)
 
-        # # description - short
-        # short_description = data["short_description"]
-        # doc.add_text("description_short", short_description)
-        # print("Short:" + short_description)
+        # description - short
+        short_description = data["short_description"]
+        doc.add_text("description_short", short_description)
+        print("Short:" + short_description)
         
-        # # genres
-        # # genres sieht so aus:
-        # # [{'id': '1', 'description': 'Action'}, {'id': '9', 'description': 'Racing'}]
-        # genres = data["genres"]
-        # for genre in genres:
-        #     doc.add_text("genres", genre["description"])
-        #     print("Genres:" + genre["description"])
+        # genres
+        # genres sieht so aus:
+        # [{'id': '1', 'description': 'Action'}, {'id': '9', 'description': 'Racing'}]
+        genres = data["genres"]
+        for genre in genres:
+            doc.add_text("genres", genre["description"])
+            print("Genres:" + genre["description"])
 
-        # # publisher
-        # publishers = data["publishers"]
-        # for publisher in publishers:
-        #     doc.add_text("publisher", publisher)
-        #     print("Publisher:" + publisher)
+        # publisher
+        publishers = data["publishers"]
+        for publisher in publishers:
+            doc.add_text("publisher", publisher)
+            print("Publisher:" + publisher)
 
-        # # platform
-        # platforms = data["platforms"]
-        # for platform in platforms:
-        #     doc.add_text("platforms", platform)   # ich bekomme alle 3 plattformen (windows, linux, mac) - aber nicht den true/false wert
+        # platform
+        platforms = data["platforms"]
+        for platform in platforms:
+            doc.add_text("platforms", platform)   # ich bekomme alle 3 plattformen (windows, linux, mac) - aber nicht den true/false wert
 
-        # # url
-        # url = data["website"]
-        # doc.add_text("url", url) 
-        # print("URL:" + url)
+        # url
+        url = data["website"]
+        doc.add_text("url", url) 
+        print("URL:" + url)
 
-        # # image
-        # image = data["header_image"]
-        # doc.add_text("image", image)
-        # print("Bild:" + image)
+        # image
+        image = data["header_image"]
+        doc.add_text("image", image)
+        print("Bild:" + image)
 
-        # # trailer
-        # trailers = data["movies"]
-        # for trailer in trailers:
-        #     doc.add_text("trailer", trailer["dash_av1"])
-        #     print("Trailer:" + trailer["dash_av1"])             # keine Ahnung ist ne mpd datei, ich kann sie nicht öffnen weiß nicht ob die angezeigt werden kann
+        # trailer
+        trailers = data["movies"]
+        for trailer in trailers:
+            doc.add_text("trailer", trailer["dash_av1"])
+            print("Trailer:" + trailer["dash_av1"])             # keine Ahnung ist ne mpd datei, ich kann sie nicht öffnen weiß nicht ob die angezeigt werden kann
 
-        # # release_date
-        # release_date = data["release_date"]
-        # doc.add_text("release_date", release_date["date"])
-        # print("Datum:" + release_date["date"])                  # unterschiedliche schreibweisen "17. Nov. 2018"; "17. Nov, 2018" --> zweites wird angezeit das erste nicht
+        # release_date
+        release_date = data["release_date"]
+        doc.add_text("release_date", release_date["date"])
+        print("Datum:" + release_date["date"])                  # unterschiedliche schreibweisen "17. Nov. 2018"; "17. Nov, 2018" --> zweites wird angezeit das erste nicht
         
     except Exception as e:
         # Fehler in der STEAM_DB-Abfrage protokollieren, Indexierung dennoch fortsetzen
@@ -154,3 +154,20 @@ for index, row in islice(data.iterrows(), 2):
 # === 5) Index-Änderungen finalisieren ===
 writer.commit()                 # Schreibvorgänge bestätigen
 writer.wait_merging_threads()   # Hintergrund-Mergeprozesse abwarten
+
+
+
+# index_path = "neu"
+# index = Index(schema, path=str(index_path))
+# searcher = index.searcher()
+
+# text_q = Query.term_query(schema, "title", "team")
+
+# q = Query.boolean_query([
+#     (Occur.Must, text_q)
+# ])
+
+# q_hits = searcher.search(q, limit=10).hits
+# for score, addr in q_hits:
+#     hit = searcher.doc(addr)
+#     print(hit['title'][0])
