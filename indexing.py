@@ -70,7 +70,7 @@ data = pd.read_csv(file)
 # islice(..., 10) beschränkt auf die ersten 10 Einträge – bei Bedarf anpassen/entfernen
 
 #for index, row in islice data.iterrows(): # für alle zeilen (kann nen bissl dauern)
-for index, row in islice(data.iterrows(), 10):
+for index, row in islice(data.iterrows(), 2):
     # Neues Tantivy-Dokument
     doc = Document()
     # === STEAM_DB-Abfragen (auf Basis der STEAM-ID) ===
@@ -87,11 +87,11 @@ for index, row in islice(data.iterrows(), 10):
         doc.add_integer("id", index)
         print("ID:" + str(index))
 
-        #titel
-        titel = data["name"]
-        doc.add_text("titel", titel)
-        print("Name:" + titel)
-        t = doc.get_all("titel")
+        #title
+        title = data["name"]
+        doc.add_text("title", title)
+        print("Name:" + title)
+        t = doc.get_all("title")
         print("Dokument:", t)
 
         #description
@@ -120,8 +120,11 @@ for index, row in islice(data.iterrows(), 10):
 
         # platform
         platforms = data["platforms"]
-        for platform in platforms:
-            doc.add_text("platforms", platform)   # ich bekomme alle 3 plattformen (windows, linux, mac) - aber nicht den true/false wert
+        print(platforms)
+        for platform, b in platforms.items():
+            if b is True:
+                doc.add_text("platforms", platform)   # ich bekomme alle 3 plattformen (windows, linux, mac) - aber nicht den true/false wert
+            
 
         # url
         url = data["website"]
