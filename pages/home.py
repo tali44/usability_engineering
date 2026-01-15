@@ -61,7 +61,7 @@ if view == "detail" and selected_id:
     publisher = doc["publisher"] if doc["publisher"] else "keine Agabe"
     platforms = doc["platforms"] if doc["platforms"] else "keine Angabe"
     img = doc["image"]
-    image_url = (img[0]) if img else "placeholder.png"
+    image_url = (img[0]) if img else ""
     url = doc["url"][0] if doc["url"] else "keine Angabe"
     trailer = doc["trailer"][0] if doc["trailer"] else ""
     date = doc["release_date"][0] if doc["release_date"] else "keine Angabe"
@@ -155,7 +155,7 @@ if q:
             doc_id = doc["id"][0]
             title = doc["title"][0]
             img = doc["image"]
-            image_url = (img[0]) if img else "placeholder.png"
+            image_url = (img[0]) if img else ""
             description_short = doc["description_short"][0] if doc["description_short"] else ""
             href = f"?view=detail&id={doc_id}&q={q}"
             img_tag = f'<img src="{image_url}" loading="lazy" alt="poster">' if image_url else ""

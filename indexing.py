@@ -59,6 +59,7 @@ index_path = pathlib.Path(index_path)
 index = Index(schema, path=str(index_path))
 writer = index.writer()  # Writer für Batch-Schreibvorgänge
 
+
 # === 3) CSVs einlesen ===
 file = 'steamID.csv'  # Pfad zur SteamID-Liste (muss existieren)
 data = pd.read_csv(file)
@@ -68,7 +69,7 @@ data = pd.read_csv(file)
 # islice(..., 10) beschränkt auf die ersten 10 Einträge – bei Bedarf anpassen/entfernen
 
 #for index, row in islice data.iterrows(): # für alle zeilen (kann nen bissl dauern)
-for index, row in islice(data.iterrows(), 20):
+for index, row in data[:20].iterrows():
     # Neues Tantivy-Dokument
     doc = Document()
 
@@ -78,7 +79,13 @@ for index, row in islice(data.iterrows(), 20):
         response = requests.get(STEAM_API + str(row.get("steamid")), headers=headers)
 
         steam_json = json.loads(response.text)
+
+        if not steam_json[str(row.get("steamid"))]["success"]:
+            print("ID existiert nicht!")
+            continue
+
         data = steam_json[str(row.get("steamid"))]["data"]
+
 
         #id
         doc.add_integer("id", index)
@@ -86,57 +93,70 @@ for index, row in islice(data.iterrows(), 20):
 
         #title
         title = data["name"]
-        doc.add_text("title", title)
+        if title is not None:
+            doc.add_text("title", title)
 
         #description
         description = data["detailed_description"]
-        doc.add_text("description", description)
+        if description is not None:
+            doc.add_text("description", description)
 
         # description - short
         short_description = data["short_description"]
-        doc.add_text("description_short", short_description)
+        if short_description is not None:
+            doc.add_text("description_short", short_description)
         
         # genres
         # genres sieht so aus:
         # [{'id': '1', 'description': 'Action'}, {'id': '9', 'description': 'Racing'}]
         genres = data["genres"]
-        for genre in genres:
-            doc.add_text("genres", genre["description"])
+        if genres is not None:
+            for genre in genres:
+                doc.add_text("genres", genre["description"])
 
         # publisher
         publishers = data["publishers"]
-        for publisher in publishers:
-            doc.add_text("publisher", publisher)
+        if publishers is not None:
+            for publisher in publishers:
+                doc.add_text("publisher", publisher)
 
         # platform
         platforms = data["platforms"]
-        for platform, b in platforms.items():
-            if b is True:
-                doc.add_text("platforms", platform)   # ich bekomme alle 3 plattformen (windows, linux, mac) - aber nicht den true/false wert
+        if platforms is not None:
+            for platform, b in platforms.items():
+                if b is True:
+                    doc.add_text("platforms", platform)
             
-        # url
-        url = data["website"]
-        doc.add_text("url", url)
-
         # image
         image = data["header_image"]
-        doc.add_text("image", image)
+        if image is not None:
+            doc.add_text("image", image)
+
+        # url
+        url = data["website"]
+        if url is not None:
+            doc.add_text("url", url)
+
+        # release_date
+        release_date = data["release_date"]
+        if release_date is not None:
+            doc.add_text("release_date", release_date["date"])
+
+
 
         # # trailer
         # trailers = data["movies"]
         # for trailer in trailers:
         #     doc.add_text("trailer", trailer["dash_av1"])         # link zu mpd datei, kann nicht über st.video angezeigt werden
-
-        # release_date
-        release_date = data["release_date"]
-        doc.add_text("release_date", release_date["date"])
-        
+                
     except Exception as e:
         # Fehler in der STEAM_DB-Abfrage protokollieren, Indexierung dennoch fortsetzen
         print(str(e))
 
     # Fertiges Dokument in den Index schreiben
     writer.add_document(doc)
+    writer.commit()
+
 
 # === 5) Index-Änderungen finalisieren ===
 writer.commit()                 # Schreibvorgänge bestätigen
