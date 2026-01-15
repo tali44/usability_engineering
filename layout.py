@@ -8,6 +8,33 @@ st.session_state["text"] = None
 st.session_state["optionen"] = None
 col1, col2, col3 = st.columns(3)
 
+import streamlit as st
+
+# Seiten festlegen
+page1 = st.Page("pages/home.py", title="Home")
+page2 = st.Page("pages/favs.py", title="Favoriten")
+page3 = st.Page("pages/search.py", title="Suche")
+page4 = st.Page("pages/wishlist.py", title="Wunschliste")
+
+# Navigationsstruktur festlegen
+pages_config = {
+    "": [page1, page2, page3, page4]
+    #"": [page1],
+    #"Aufklappmenü": [page2],
+}
+
+# CSS einlesen
+with open("styles.html", "r") as f:
+    css = f.read()
+st.set_page_config(layout="wide")
+st.markdown(css, unsafe_allow_html=True)
+
+# Navigationsstruktur erstellen
+navigation = st.navigation(pages_config, position="top")
+navigation.run()
+
+
+
 with col1:
     st.title("Spalte 1")
     st.color_picker("Farbe auswählen", "#044c38")

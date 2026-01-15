@@ -154,6 +154,3 @@ for index, row in islice(data.iterrows(), 2):
 # === 5) Index-Änderungen finalisieren ===
 writer.commit()                 # Schreibvorgänge bestätigen
 writer.wait_merging_threads()   # Hintergrund-Mergeprozesse abwarten
-
-
-searcher = index.searcher()
