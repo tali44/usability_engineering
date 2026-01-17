@@ -19,6 +19,7 @@ import requests
 import os
 from itertools import islice
 from dotenv import load_dotenv
+import traceback
 
 
 # Basis-URLs für SteamDB-Requests
@@ -62,98 +63,97 @@ writer = index.writer()  # Writer für Batch-Schreibvorgänge
 
 
 # === 3) CSVs einlesen ===
-file = 'steamID.csv'  # Pfad zur SteamID-Liste (muss existieren)
-data = pd.read_csv(file)
+# file = 'steamID.csv'  # Pfad zur SteamID-Liste (muss existieren)
+# data = pd.read_csv(file)
 
 
 # === 4) Dokumente aufbauen und in den Index schreiben ===
-for index, row in data[:].iterrows():
-    # Neues Tantivy-Dokument
-    doc = Document()
+# for index, row in data[:].iterrows():
+with open("allrequests.txt", "r", encoding="UTF-8") as f:
+    for idx, line in enumerate(f):
+        # Neues Tantivy-Dokument
+        doc = Document()
 
-    # === STEAM_DB-Abfragen (auf Basis der STEAM-ID) ===
-    try:
-        print(row.get("steamid"))
-        response = requests.get(STEAM_API + str(row.get("steamid")), headers=headers)
+        # === STEAM_DB-Abfragen (auf Basis der STEAM-ID) ===
+        try:
+            steam_json = json.loads(line)
+            steam_ID = list(steam_json.keys())[0]
+            if not steam_json[steam_ID]["success"]:
+                print("ID existiert nicht!")
+                continue
 
-        steam_json = json.loads(response.text)
+            data = steam_json[steam_ID]["data"]
 
-        if not steam_json[str(row.get("steamid"))]["success"]:
-            print("ID existiert nicht!")
-            continue
+            #id
+            doc.add_integer("id", idx)
+            print("ID:" + str(idx))
 
-        data = steam_json[str(row.get("steamid"))]["data"]
+            #title
+            title = data.get("name")
+            if title is not None:
+                doc.add_text("title", title)
 
-        #id
-        doc.add_integer("id", index)
-        print("ID:" + str(index))
+            #description
+            description = data.get("detailed_description")
+            if description is not None:
+                doc.add_text("description", description)
 
-        #title
-        title = data["name"]
-        if title is not None:
-            doc.add_text("title", title)
-
-        #description
-        description = data["detailed_description"]
-        if description is not None:
-            doc.add_text("description", description)
-
-        # description - short
-        short_description = data["short_description"]
-        if short_description is not None:
-            doc.add_text("description_short", short_description)
-        
-        # genres
-        # genres sieht so aus:
-        # [{'id': '1', 'description': 'Action'}, {'id': '9', 'description': 'Racing'}]
-        genres = data["genres"]
-        if genres is not None:
-            for genre in genres:
-                doc.add_text("genres", genre["description"])
-
-        # publisher
-        publishers = data["publishers"]
-        if publishers is not None:
-            for publisher in publishers:
-                doc.add_text("publisher", publisher)
-
-        # platform
-        platforms = data["platforms"]
-        if platforms is not None:
-            for platform, b in platforms.items():
-                if b is True:
-                    doc.add_text("platforms", platform)
+            # description - short
+            short_description = data.get("short_description")
+            if short_description is not None:
+                doc.add_text("description_short", short_description)
             
-        # image
-        image = data["header_image"]
-        if image is not None:
-            doc.add_text("image", image)
+            # genres
+            # genres sieht so aus:
+            # [{'id': '1', 'description': 'Action'}, {'id': '9', 'description': 'Racing'}]
+            genres = data.get("genres")
+            if genres is not None:
+                for genre in genres:
+                    doc.add_text("genres", genre["description"])
 
-        # url
-        url = data["website"]
-        if url is not None:
-            doc.add_text("url", url)
+            # publisher
+            publishers = data.get("publishers")
+            if publishers is not None:
+                for publisher in publishers:
+                    doc.add_text("publisher", publisher)
 
-        # release_date
-        release_date = data["release_date"]
-        if release_date is not None:
-            doc.add_text("release_date", release_date["date"])
+            # platform
+            platforms = data.get("platforms")
+            if platforms is not None:
+                for platform, b in platforms.items():
+                    if b is True:
+                        doc.add_text("platforms", platform)
+                
+            # image
+            image = data.get("header_image")
+            if image is not None:
+                doc.add_text("image", image)
 
-        # trailer
-        trailers:list[dict] = data["movies"]
-        if trailers is not None:
-            trailers = [t for t in trailers if t["highlight"]]
-            doc.add_text("trailer", trailers[0]["hls_h264"])
-        
-        print("--> wurde eingelesen")
-                    
-    except Exception as e:
-        # Fehler in der STEAM_DB-Abfrage protokollieren, Indexierung dennoch fortsetzen
-        print(str(e))
+            # url
+            url = data.get("website")
+            if url is not None:
+                doc.add_text("url", url)
 
-    # Fertiges Dokument in den Index schreiben
-    writer.add_document(doc)
-    writer.commit()
+            # release_date
+            release_date = data.get("release_date")
+            if release_date is not None:
+                doc.add_text("release_date", release_date["date"])
+
+            # trailer
+            trailers:list[dict] = data.get("movies")
+            if trailers is not None:
+                trailers = [t for t in trailers if t["highlight"]]
+                doc.add_text("trailer", trailers[0]["hls_h264"])
+            
+            print("--> wurde eingelesen")
+                        
+        except Exception as e:
+            # Fehler in der STEAM_DB-Abfrage protokollieren, Indexierung dennoch fortsetzen
+            print(traceback.format_exc())
+
+        # Fertiges Dokument in den Index schreiben
+        writer.add_document(doc)
+        writer.commit()
 
 
 # === 5) Index-Änderungen finalisieren ===
