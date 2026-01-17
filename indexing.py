@@ -69,7 +69,7 @@ data = pd.read_csv(file)
 # islice(..., 10) beschränkt auf die ersten 10 Einträge – bei Bedarf anpassen/entfernen
 
 #for index, row in islice data.iterrows(): # für alle zeilen (kann nen bissl dauern)
-for index, row in data[:10].iterrows():
+for index, row in data[:].iterrows():
     # Neues Tantivy-Dokument
     doc = Document()
 
