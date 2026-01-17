@@ -49,6 +49,7 @@ schema = schema_builder.build()
 
 # === 2) Index anlegen/öffnen ===S
 index_path = "neu"  # Relativer Pfad für das Index-Verzeichnis
+
 if not os.path.exists(index_path):
     os.makedirs(index_path)
     print(f"Der {index_path}-Ordner wurde angelegt.")
@@ -66,9 +67,6 @@ data = pd.read_csv(file)
 
 
 # === 4) Dokumente aufbauen und in den Index schreiben ===
-# islice(..., 10) beschränkt auf die ersten 10 Einträge – bei Bedarf anpassen/entfernen
-
-#for index, row in islice data.iterrows(): # für alle zeilen (kann nen bissl dauern)
 for index, row in data[:].iterrows():
     # Neues Tantivy-Dokument
     doc = Document()
@@ -85,7 +83,6 @@ for index, row in data[:].iterrows():
             continue
 
         data = steam_json[str(row.get("steamid"))]["data"]
-
 
         #id
         doc.add_integer("id", index)
@@ -147,6 +144,8 @@ for index, row in data[:].iterrows():
         if trailers is not None:
             trailers = [t for t in trailers if t["highlight"]]
             doc.add_text("trailer", trailers[0]["hls_h264"])
+        
+        print("--> wurde eingelesen")
                     
     except Exception as e:
         # Fehler in der STEAM_DB-Abfrage protokollieren, Indexierung dennoch fortsetzen
