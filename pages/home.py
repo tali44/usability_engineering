@@ -7,7 +7,6 @@ from streamlit.components.v1 import html
 # Konstanten
 INDEX_PATH = "neu"  # bestehendes Tantivy-Index-Verzeichnis
 TOP_K = 20          # wie viele Ergebnisse angezeigt werden sollen
-CARDS_PER_PAGE = 3 # Cards, die in der zufälligen Anzeige auftauchen
 
 
 schema_builder = SchemaBuilder()
@@ -207,6 +206,7 @@ if q:
 
         for score, addr in hits:
             doc = searcher.doc(addr)
+
             doc_id = doc["id"][0]
             title = doc["title"][0]
             img = doc["image"]
