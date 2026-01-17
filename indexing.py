@@ -66,6 +66,8 @@ writer = index.writer()  # Writer für Batch-Schreibvorgänge
 # file = 'steamID.csv'  # Pfad zur SteamID-Liste (muss existieren)
 # data = pd.read_csv(file)
 
+# Nach dem indizieren werden IDs vermerkt, damit nichts doppelt indiziert wird
+processed_steamIDs = set()
 
 # === 4) Dokumente aufbauen und in den Index schreiben ===
 # for index, row in data[:].iterrows():
@@ -78,8 +80,13 @@ with open("allrequests.txt", "r", encoding="UTF-8") as f:
         try:
             steam_json = json.loads(line)
             steam_ID = list(steam_json.keys())[0]
+
             if not steam_json[steam_ID]["success"]:
                 print("ID existiert nicht!")
+                continue
+
+            if steam_ID in processed_steamIDs:
+                print("haben wir schon.")
                 continue
 
             data = steam_json[steam_ID]["data"]
@@ -143,9 +150,12 @@ with open("allrequests.txt", "r", encoding="UTF-8") as f:
             trailers:list[dict] = data.get("movies")
             if trailers is not None:
                 trailers = [t for t in trailers if t["highlight"]]
-                doc.add_text("trailer", trailers[0]["hls_h264"])
+                if len(trailers)>0:
+                    doc.add_text("trailer", trailers[0]["hls_h264"])
             
             print("--> wurde eingelesen")
+
+            processed_steamIDs.add(steam_ID)        #IDs als verarbeitet markieren
                         
         except Exception as e:
             # Fehler in der STEAM_DB-Abfrage protokollieren, Indexierung dennoch fortsetzen
@@ -153,8 +163,6 @@ with open("allrequests.txt", "r", encoding="UTF-8") as f:
 
         # Fertiges Dokument in den Index schreiben
         writer.add_document(doc)
-        writer.commit()
-
 
 # === 5) Index-Änderungen finalisieren ===
 writer.commit()                 # Schreibvorgänge bestätigen
