@@ -71,7 +71,7 @@ processed_steamIDs = set()
 
 # === 4) Dokumente aufbauen und in den Index schreiben ===
 # for index, row in data[:].iterrows():
-with open("allrequests.txt", "r", encoding="UTF-8") as f:
+with open("data.txt", "r", encoding="UTF-8") as f:
     for idx, line in enumerate(f):
         # Neues Tantivy-Dokument
         doc = Document()
