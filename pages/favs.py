@@ -11,6 +11,7 @@ TOP_K = 20          # wie viele Ergebnisse angezeigt werden sollen
 
 schema_builder = SchemaBuilder()
 schema_builder.add_integer_field("id", stored=True, indexed=True)
+schema_builder.add_integer_field("steamId", stored=True, indexed=True)
 schema_builder.add_text_field("title", stored=True, tokenizer_name='en_stem')
 schema_builder.add_text_field("description", stored=True, tokenizer_name='en_stem')  # Mehrwertiges Textfeld
 schema_builder.add_text_field("description_short", stored=True, tokenizer_name='en_stem')  # Mehrwertiges Textfeld
@@ -209,7 +210,7 @@ st.title("Favoriten der Redaktion")
 
 # Raster (Grid) darstellen, wenn q existiert
 ids = [5497, 7027, 5667, 8296, 6641, 11224, 63379, 65814, 9970, 10108]
-#ids = [1, 4, 16, 8, 200, 678]
+#ids = [1172620, 648800, 413150, 1158310, 728880, 1326470, 2567870, 2683150, 1129580, 1426210]
 # SoT: 1172620 (5497)
 # Raft: 648800 (7027)
 # Stardew: 413150 (5667)
@@ -226,6 +227,7 @@ cards_html = ['<div class="grid">']
 
 for fav_id in ids:
     doc = load_doc_by_id(fav_id)
+    #doc = searcher.doc(fav_id)
     if doc is None:
         continue
 
