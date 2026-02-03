@@ -224,9 +224,10 @@ ids = [5497, 7027, 5667, 8296, 6641, 127025, 58365, 60799, 9969, 10107]
 
 cards_html = ['<div class="grid_favs">']
 
+num = 0
+
 for fav_id in ids:
     doc = load_doc_by_id(fav_id)
-    #doc = searcher.doc(fav_id)
     if doc is None:
         continue
 
@@ -237,6 +238,11 @@ for fav_id in ids:
     description_short = doc["description_short"][0] if doc["description_short"] else ""
     href = f"?view=detail&id={doc_id}&q={up.quote_plus(str(q))}"
     img_tag = f'<img src="{image_url}" loading="lazy" alt="poster">' if image_url else ""
-    cards_html.append(f'<a class="card" href="{href}" target="_self">{img_tag}<div class="t">{title}</div></a>')
+
+    num += 1
+    #place = f'<img scr="img/{str(num)}.png" alt="platzierung">'
+    place = f'<div class="platz">#{str(num)}</div>'
+
+    cards_html.append(f'<div class="num">{place}<a class="card" href="{href}" target="_self">{img_tag}<div class="t">{title}</div></a></div>')
 cards_html.append("</div>")
 st.markdown("".join(cards_html), unsafe_allow_html=True)
