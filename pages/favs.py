@@ -209,18 +209,18 @@ st.title("Favoriten der Redaktion")
 
 
 # Raster (Grid) darstellen, wenn q existiert
-ids = [5497, 7027, 5667, 8296, 6641, 11224, 63379, 65814, 9970, 10108]
+ids = [5497, 7027, 5667, 8296, 6641, 127025, 127026, 127027, 127028, 127029]
 #ids = [1172620, 648800, 413150, 1158310, 728880, 1326470, 2567870, 2683150, 1129580, 1426210]
 # SoT: 1172620 (5497)
 # Raft: 648800 (7027)
 # Stardew: 413150 (5667)
 # CK3: 1158310 (8296)
 # Overcooked 2: 728880 (6641)
-# SotF: 1326470 (11224)
-# Chained Together: 2567870 (63379)
-# A&T Tavern: 2683150 (65814)
-# Medieval Dynasty: 1129580 (9970)
-# It takes Two: 1426210 (10108)
+# SotF: 1326470 ()
+# Chained Together: 2567870 ()
+# A&T Tavern: 2683150 ()
+# Medieval Dynasty: 1129580 ()
+# It takes Two: 1426210 ()
 
 
 cards_html = ['<div class="grid">']
@@ -238,6 +238,6 @@ for fav_id in ids:
     description_short = doc["description_short"][0] if doc["description_short"] else ""
     href = f"?view=detail&id={doc_id}&q={up.quote_plus(str(q))}"
     img_tag = f'<img src="{image_url}" loading="lazy" alt="poster">' if image_url else ""
-    cards_html.append(f'<a class="card" href="{href}" target="_self">{img_tag}<div class="t">{title, doc_id}</div></a>')
+    cards_html.append(f'<a class="card" href="{href}" target="_self">{img_tag}<div class="t">{title}</div></a>')
 cards_html.append("</div>")
 st.markdown("".join(cards_html), unsafe_allow_html=True)
