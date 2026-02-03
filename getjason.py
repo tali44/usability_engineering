@@ -6,8 +6,8 @@ import time
 
 # Basis-URLs für SteamDB-Requests
 STEAM_API = "https://store.steampowered.com/api/appdetails?appids="
-VON_STEAM_ID = 121918       # Anfangsnummer eingeben --> beim nächsten indizieren wäre das 4582
-BIS_STEAM_ID = 124000    # Endnummer eingeben, i guess in so 4000 Abständen wäre ganz ok
+VON_STEAM_ID = 0     # Anfangsnummer eingeben --> beim nächsten indizieren wäre das 4582
+BIS_STEAM_ID = 5    # Endnummer eingeben, i guess in so 4000 Abständen wäre ganz ok
 
 # HTTP-Header inkl. Bearer-Token für SteamDB
 headers = {
