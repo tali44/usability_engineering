@@ -209,8 +209,8 @@ st.title("Favoriten der Redaktion")
 
 
 # Raster (Grid) darstellen, wenn q existiert
-#ids = [5497, 7027, 5667, 8296, 6641, 11224, 63379, 65814, 9970, 10108]
-ids = [1172620, 648800, 413150, 1158310, 728880, 1326470, 2567870, 2683150, 1129580, 1426210]
+ids = [5497, 7027, 5667, 8296, 6641, 11224, 63379, 65814, 9970, 10108]
+#ids = [1172620, 648800, 413150, 1158310, 728880, 1326470, 2567870, 2683150, 1129580, 1426210]
 # SoT: 1172620 (5497)
 # Raft: 648800 (7027)
 # Stardew: 413150 (5667)
@@ -227,10 +227,11 @@ cards_html = ['<div class="grid">']
 
 for fav_id in ids:
     doc = load_doc_by_id(fav_id)
+    #doc = searcher.doc(fav_id)
     if doc is None:
         continue
 
-    doc_id = doc["steamId"][0] #if doc.get_all("id") else fav_id
+    doc_id = doc["id"][0] #if doc.get_all("id") else fav_id
     title = doc["title"][0] 
     img = doc["image"]
     image_url = img[0] if img else ""

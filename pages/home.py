@@ -215,7 +215,7 @@ if q:
             description_short = doc["description_short"][0] if doc["description_short"] else ""
             href = f"?view=detail&id={doc_id}&q={q}"
             img_tag = f'<img src="{image_url}" loading="lazy" alt="poster">' if image_url else ""
-            cards_html.append(f'<a class="card" href="{href}"target="_self">{img_tag}<div class="t">{title }</div></a>')
+            cards_html.append(f'<a class="card" href="{href}"target="_self">{img_tag}<div class="t">{title}</div></a>')
         cards_html.append("</div>")
         st.markdown("".join(cards_html), unsafe_allow_html=True)
 else:
