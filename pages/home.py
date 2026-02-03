@@ -6,7 +6,7 @@ from streamlit.components.v1 import html
 
 # Konstanten
 INDEX_PATH = "neu"  # bestehendes Tantivy-Index-Verzeichnis
-TOP_K = 20          # wie viele Ergebnisse angezeigt werden sollen
+TOP_K = 60          # wie viele Ergebnisse angezeigt werden sollen
 
 
 schema_builder = SchemaBuilder()

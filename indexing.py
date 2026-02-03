@@ -36,6 +36,7 @@ headers = {
 # === 1) Schema für den Index definieren ===
 schema_builder = SchemaBuilder()
 schema_builder.add_integer_field("id", stored=True, indexed=True)
+schema_builder.add_integer_field("steamId", stored=True, indexed=True)
 schema_builder.add_text_field("title", stored=True, tokenizer_name='en_stem')
 schema_builder.add_text_field("description", stored=True, tokenizer_name='en_stem')
 schema_builder.add_text_field("description_short", stored=True, tokenizer_name='en_stem')
@@ -94,6 +95,10 @@ with open("data.txt", "r", encoding="UTF-8") as f:
             #id
             doc.add_integer("id", idx)
             print("ID:" + str(idx))
+
+            #SteamId
+            doc.add_integer("steamId", steam_ID)
+            print("ID:" + str(steam_ID))
 
             #title
             title = data.get("name")
