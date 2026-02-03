@@ -210,13 +210,12 @@ st.title("Favoriten der Redaktion")
 
 # Raster (Grid) darstellen, wenn q existiert
 ids = [5497, 7027, 5667, 8296, 6641, 127025, 127026, 127027, 127028, 127029]
-#ids = [1172620, 648800, 413150, 1158310, 728880, 1326470, 2567870, 2683150, 1129580, 1426210]
 # SoT: 1172620 (5497)
 # Raft: 648800 (7027)
 # Stardew: 413150 (5667)
 # CK3: 1158310 (8296)
 # Overcooked 2: 728880 (6641)
-# SotF: 1326470 ()
+# SotF: 1326470 (127025)
 # Chained Together: 2567870 ()
 # A&T Tavern: 2683150 ()
 # Medieval Dynasty: 1129580 ()
