@@ -96,9 +96,10 @@ with open("data.txt", "r", encoding="UTF-8") as f:
             doc.add_integer("id", idx)
             print("ID:" + str(idx))
 
-            #SteamId
-            doc.add_integer("steamId", steam_ID)
-            print("ID:" + str(steam_ID))
+            #steamId
+            steamId = data.get("steam_appid")
+            doc.add_integer("steamId", steamId)
+            print("Steam-ID:" + str(steam_ID))
 
             #title
             title = data.get("name")
