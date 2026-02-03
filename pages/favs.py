@@ -208,8 +208,8 @@ st.title("Favoriten der Redaktion")
 
 
 # Raster (Grid) darstellen, wenn q existiert
-#ids = [5497, 7027, 5667, 8296, 6641, 11224, 63379, 65814, 9970, 10108]
-ids = [1, 4, 16, 8, 200, 678]
+ids = [5497, 7027, 5667, 8296, 6641, 11224, 63379, 65814, 9970, 10108]
+#ids = [1, 4, 16, 8, 200, 678]
 # SoT: 1172620 (5497)
 # Raft: 648800 (7027)
 # Stardew: 413150 (5667)
@@ -220,7 +220,6 @@ ids = [1, 4, 16, 8, 200, 678]
 # A&T Tavern: 2683150 (65814)
 # Medieval Dynasty: 1129580 (9970)
 # It takes Two: 1426210 (10108)
-
 
 
 cards_html = ['<div class="grid">']
@@ -237,6 +236,6 @@ for fav_id in ids:
     description_short = doc["description_short"][0] if doc["description_short"] else ""
     href = f"?view=detail&id={doc_id}&q={up.quote_plus(str(q))}"
     img_tag = f'<img src="{image_url}" loading="lazy" alt="poster">' if image_url else ""
-    cards_html.append(f'<a class="card" href="{href}" target="_self">{img_tag}<div class="t">{title}</div></a>')
+    cards_html.append(f'<a class="card" href="{href}" target="_self">{img_tag}<div class="t">{title, doc_id}</div></a>')
 cards_html.append("</div>")
 st.markdown("".join(cards_html), unsafe_allow_html=True)
