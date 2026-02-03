@@ -1,0 +1,204 @@
+{
+  "index_settings": {
+    "docstore_compression": "lz4",
+    "docstore_blocksize": 16384
+  },
+  "segments": [
+    {
+      "segment_id": "71b018ca-5b27-4bb0-a72d-c2d9aac37237",
+      "max_doc": 20123,
+      "deletes": null
+    },
+    {
+      "segment_id": "084ba546-d254-4c7e-b6ed-8765a28150a5",
+      "max_doc": 14606,
+      "deletes": null
+    },
+    {
+      "segment_id": "eaffed66-2e6d-428e-84fc-33f5f8c1a30a",
+      "max_doc": 14536,
+      "deletes": null
+    },
+    {
+      "segment_id": "b900babe-9e95-40fb-8700-f062ac96b2d7",
+      "max_doc": 14454,
+      "deletes": null
+    },
+    {
+      "segment_id": "1802f612-2e67-4fb0-8d41-bdcc8919dbb1",
+      "max_doc": 14341,
+      "deletes": null
+    },
+    {
+      "segment_id": "807b9364-ae85-4cfc-9ec1-b8aff8a386ff",
+      "max_doc": 12239,
+      "deletes": null
+    },
+    {
+      "segment_id": "f119c869-2366-4906-b743-5b272577813c",
+      "max_doc": 7748,
+      "deletes": null
+    },
+    {
+      "segment_id": "37c97597-d15e-4168-8d42-271903ed2bee",
+      "max_doc": 534,
+      "deletes": null
+    },
+    {
+      "segment_id": "2850ca9b-f9bb-46ae-97b1-e5260ace3ef7",
+      "max_doc": 45,
+      "deletes": null
+    }
+  ],
+  "schema": [
+    {
+      "name": "id",
+      "type": "i64",
+      "options": {
+        "indexed": true,
+        "fieldnorms": false,
+        "fast": false,
+        "stored": true
+      }
+    },
+    {
+      "name": "steamId",
+      "type": "i64",
+      "options": {
+        "indexed": true,
+        "fieldnorms": false,
+        "fast": false,
+        "stored": true
+      }
+    },
+    {
+      "name": "title",
+      "type": "text",
+      "options": {
+        "indexing": {
+          "record": "position",
+          "fieldnorms": true,
+          "tokenizer": "en_stem"
+        },
+        "stored": true,
+        "fast": false
+      }
+    },
+    {
+      "name": "description",
+      "type": "text",
+      "options": {
+        "indexing": {
+          "record": "position",
+          "fieldnorms": true,
+          "tokenizer": "en_stem"
+        },
+        "stored": true,
+        "fast": false
+      }
+    },
+    {
+      "name": "description_short",
+      "type": "text",
+      "options": {
+        "indexing": {
+          "record": "position",
+          "fieldnorms": true,
+          "tokenizer": "en_stem"
+        },
+        "stored": true,
+        "fast": false
+      }
+    },
+    {
+      "name": "genres",
+      "type": "text",
+      "options": {
+        "indexing": {
+          "record": "position",
+          "fieldnorms": true,
+          "tokenizer": "default"
+        },
+        "stored": true,
+        "fast": false
+      }
+    },
+    {
+      "name": "publisher",
+      "type": "text",
+      "options": {
+        "indexing": {
+          "record": "position",
+          "fieldnorms": true,
+          "tokenizer": "default"
+        },
+        "stored": true,
+        "fast": false
+      }
+    },
+    {
+      "name": "platforms",
+      "type": "text",
+      "options": {
+        "indexing": {
+          "record": "position",
+          "fieldnorms": true,
+          "tokenizer": "default"
+        },
+        "stored": true,
+        "fast": false
+      }
+    },
+    {
+      "name": "url",
+      "type": "text",
+      "options": {
+        "indexing": {
+          "record": "position",
+          "fieldnorms": true,
+          "tokenizer": "default"
+        },
+        "stored": true,
+        "fast": false
+      }
+    },
+    {
+      "name": "image",
+      "type": "text",
+      "options": {
+        "indexing": {
+          "record": "position",
+          "fieldnorms": true,
+          "tokenizer": "default"
+        },
+        "stored": true,
+        "fast": false
+      }
+    },
+    {
+      "name": "trailer",
+      "type": "text",
+      "options": {
+        "indexing": {
+          "record": "position",
+          "fieldnorms": true,
+          "tokenizer": "default"
+        },
+        "stored": true,
+        "fast": false
+      }
+    },
+    {
+      "name": "release_date",
+      "type": "date",
+      "options": {
+        "indexed": false,
+        "fieldnorms": false,
+        "fast": false,
+        "stored": true,
+        "precision": "seconds"
+      }
+    }
+  ],
+  "opstamp": 98745
+}
