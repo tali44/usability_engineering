@@ -117,10 +117,8 @@ if view == "detail" and selected_id:
 
 
     st.title(title)
-    st.image(image_url)
 
-    if trailer is not None:
-        html(f"""<!DOCTYPE html>
+    video_html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -134,15 +132,13 @@ if view == "detail" and selected_id:
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 800px;
-            height: 400px;
+            width: 100vw;
+            height: 99vh;
             background: #000;
         }}
-
         .video-js {{
             width: 100%;
             height: 100%;
-            max-height: 400px;
         }}
     </style>
 </head>
@@ -172,41 +168,25 @@ if (Hls.isSupported()) {{
         }}
 </script>
 </body>
-</html>""", height=400, width=800)
-    
-    st.set_page_config(layout="wide")
-
-    col1, col2 = st.columns(2)
-    st.session_state["optionen"] = None
-    st.session_state["slider"] = None
-    st.session_state["checkbox"] = None
-    st.session_state["text"] = None
-
-    with col1:
-        st.markdown(description, unsafe_allow_html=True)
+</html>""".replace("&","&amp;").replace("<","&lt;").replace(">","&gt;").replace('"','&quot;').replace("'","&#039;")
+        
         
 
-    with col2:
-        st.text("Genres:")
-        st.markdown(genre_html, unsafe_allow_html=True)
+    html = ['<div class="layout">']
 
-        st.text("Publisher:")
-        st.markdown(publisher_html, unsafe_allow_html=True)
-        
-        st.text("Für Platformen verfügbar:")
-        st.markdown(platform_html, unsafe_allow_html=True)
+    if trailer is not None:
+        iframe = f'<iframe class="trailer" srcdoc="{video_html}" allow="accelerometer; ambient-light-sensor; autoplay; battery; camera; clipboard-write; document-domain; encrypted-media; fullscreen; geolocation; gyroscope; layout-animations; legacy-image-formats; magnetometer; microphone; midi; oversized-images; payment; picture-in-picture; publickey-credentials-get; sync-xhr; usb; vr ; wake-lock; xr-spatial-tracking"></iframe>'
 
-        st.text("Link zur Website:")
-        st.write(url)
+    html.append(f'<div class="column_l">{iframe}<p>{description}</p></div>')
+    html.append(f'<div class="column_r"><p>Genres:</p><p>{genre_html}</p><p>Publisher:</p><p>{publisher_html}</p><p>Für Platformen verfügbar:</p><p>{platform_html}</p><p>Link zur Website:</p><a class="link" href="{url}"><p>{url}</p></a><p>Erscheinungsdatum:</p><p>{date}</p></div>')
+    html.append("</div>")
+    st.markdown("".join(html), unsafe_allow_html=True)
 
-        st.text("Erscheinungsdatum:")
-        st.text(date)
     st.stop()
 
 
 # Hauptseite
 st.title("Favoriten der Redaktion")
-
 
 # Raster (Grid) darstellen, wenn q existiert
 ids = [5497, 7027, 5667, 8296, 6641, 127025, 58365, 60799, 9969, 10107]
@@ -243,6 +223,6 @@ for fav_id in ids:
     #place = f'<img scr="img/{str(num)}.png" alt="platzierung">'
     place = f'<div class="platz">#{str(num)}</div>'
 
-    cards_html.append(f'<div class="num">{place}<a class="card" href="{href}" target="_self">{img_tag}<div class="t">{title}</div></a></div>')
+    cards_html.append(f'<div class="num">{place}<a class="card" onmousemove="description_text()" href="{href}" target="_self">{img_tag}<div class="t">{title}</div></a></div>')
 cards_html.append("</div>")
 st.markdown("".join(cards_html), unsafe_allow_html=True)
