@@ -115,7 +115,6 @@ if view == "detail" and selected_id:
         st.rerun()
     
 
-
     st.title(title)
 
     video_html = f"""<!DOCTYPE html>
@@ -211,7 +210,7 @@ for fav_id in ids:
     if doc is None:
         continue
 
-    doc_id = doc["id"][0] #if doc.get_all("id") else fav_id
+    doc_id = doc["id"][0]
     title = doc["title"][0] 
     img = doc["image"]
     image_url = img[0] if img else ""
@@ -220,9 +219,10 @@ for fav_id in ids:
     img_tag = f'<img src="{image_url}" loading="lazy" alt="poster">' if image_url else ""
 
     num += 1
-    #place = f'<img scr="img/{str(num)}.png" alt="platzierung">'
     place = f'<div class="platz">#{str(num)}</div>'
+    card = f'<div class="hover"><a class="card" href="{href}" target="_self">{img_tag}<div class="t">{title}</div></a></div>'
+    extra = f'<div class="extra"><p>{description_short}</p></div>'
 
-    cards_html.append(f'<div class="num">{place}<a class="card" onmousemove="description_text()" href="{href}" target="_self">{img_tag}<div class="t">{title}</div></a></div>')
+    cards_html.append(f'<div class="num">{place}{card}{extra}</div>')
 cards_html.append("</div>")
 st.markdown("".join(cards_html), unsafe_allow_html=True)

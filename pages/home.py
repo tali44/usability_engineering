@@ -165,7 +165,7 @@ if (Hls.isSupported()) {{
 st.title("Video Spiele")
 
 # Verarbeitet die aktuelle Anfrage (Query);
-query_text = st.text_input("suche", value=q, placeholder="z. B. Sea of Thieves, The Witcher, etc. ...")
+query_text = st.text_input(" ", value=q, placeholder="z. B. Sea of Thieves, The Witcher, etc. ...")
 if st.button("Suchen", type="primary"):
     if not query_text:
         st.info("Bitte gib einen Suchbegriff ein.")
@@ -182,7 +182,6 @@ if q:
     if not hits:
         st.warning("Keine Ergebnisse gefunden.")
     else:
-        st.subheader("Ergebnisse")
         # Erstelle das Grid mit klickbaren Thumbnails
         cards_html = ['<div class="grid">']
 
@@ -196,7 +195,21 @@ if q:
             description_short = doc["description_short"][0] if doc["description_short"] else ""
             href = f"?view=detail&id={doc_id}&q={q}"
             img_tag = f'<img src="{image_url}" loading="lazy" alt="poster">' if image_url else ""
-            cards_html.append(f'<a class="card" href="{href}"target="_self">{img_tag}<div class="t">{title}</div></a>')
+            genres = doc["genres"] if doc["genres"] else "keine Angabe"
+
+            if genres is not None:
+                genre_html = "<div>"
+                for tag in genres:
+                    genre_html += f'<span class="tag">{tag}</span>'
+                genre_html += "</div>"
+
+
+            extra = f'<div class="extra"><p>{description_short}{genre_html}</p></div>'       
+            card = f'<div class="hover"><a href="{href}" target="_self">{img_tag}<div class="text"><div class="t">{title}</div>{extra}</div></a></div>'
+
+            cards_html.append(f'<div class="suche card">{card}</div>')
+
+            #cards_html.append(f'<a class="card" href="{href}"target="_self">{img_tag}<div class="t">{title}</div></a>')
         cards_html.append("</div>")
         st.markdown("".join(cards_html), unsafe_allow_html=True)
 else:
