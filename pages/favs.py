@@ -1,31 +1,10 @@
 import streamlit as st
 import urllib.parse as up
 from typing import Any
-from tantivy import Query, Index, SchemaBuilder
+from tantivy import Index
 from streamlit.components.v1 import html
 
-# Konstanten
-INDEX_PATH = "neu"  # bestehendes Tantivy-Index-Verzeichnis
-TOP_K = 20          # wie viele Ergebnisse angezeigt werden sollen
-
-
-schema_builder = SchemaBuilder()
-schema_builder.add_integer_field("id", stored=True, indexed=True)
-schema_builder.add_integer_field("steamId", stored=True, indexed=True)
-schema_builder.add_text_field("title", stored=True)
-schema_builder.add_text_field("description", stored=True, tokenizer_name='en_stem')  # Mehrwertiges Textfeld
-schema_builder.add_text_field("description_short", stored=True, tokenizer_name='en_stem')  # Mehrwertiges Textfeld
-schema_builder.add_text_field("genres", stored=True)
-schema_builder.add_text_field("publisher", stored=True)
-schema_builder.add_text_field("platforms", stored=True)
-schema_builder.add_text_field("url", stored=True)
-schema_builder.add_text_field("image", stored=True)
-schema_builder.add_text_field("trailer", stored=True)
-schema_builder.add_date_field("release_date", stored=True)
-schema = schema_builder.build()
-
-index_path = "neu"
-index = Index(schema, path=str(index_path))
+index = Index.open("neu")
 searcher = index.searcher()
 
 with open("styles.html", "r") as f:
@@ -33,13 +12,11 @@ with open("styles.html", "r") as f:
 
 st.markdown(css, unsafe_allow_html=True)
 
-
 # Hilfsfunktion für Seitenrouting mit Anfrageparametern.
 # Gibt die Query-Parameter der aktuellen Seite als Dictionary zurück.
 # Falls `st.query_params` nicht verfügbar ist, wird ein leeres Dictionary zurückgegeben.
 def get_qp() -> dict[str, Any]:
     return getattr(st, "query_params", {})
-
 
 # (Letzte) Nutzeranfrage, die in den Session-Parametern gespeichert ist
 q = get_qp().get("q", "")
@@ -78,7 +55,6 @@ if view == "detail" and selected_id:
     score, address = hits[0]
     doc = searcher.doc(address)
 
-
     title= doc["title"][0]
     description = doc["description"][0] if doc["description"] else "keine Angabe"
     genres = doc["genres"] if doc["genres"] else "keine Angabe"
@@ -108,13 +84,11 @@ if view == "detail" and selected_id:
            platform_html += f'<span class="tag">{tag}</span>'
        platform_html += "</div>"
 
-
     if st.button("Zurück zur Übersicht"):
         st.query_params.update({view: "grid"})
         st.query_params.pop("id", None)
         st.rerun()
     
-
     st.title(title)
 
     video_html = f"""<!DOCTYPE html>
@@ -170,7 +144,6 @@ if (Hls.isSupported()) {{
 </html>""".replace("&","&amp;").replace("<","&lt;").replace(">","&gt;").replace('"','&quot;').replace("'","&#039;")
         
         
-
     html = ['<div class="layout">']
 
     if trailer is not None:
@@ -187,8 +160,8 @@ if (Hls.isSupported()) {{
 # Hauptseite
 st.title("Favoriten der Redaktion")
 
-# Raster (Grid) darstellen, wenn q existiert
 ids = [5497, 7027, 5667, 8296, 6641, 127025, 58365, 60799, 9969, 10107]
+# Titel: SteamID (id)
 # SoT: 1172620 (5497)
 # Raft: 648800 (7027)
 # Stardew: 413150 (5667)

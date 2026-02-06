@@ -1,39 +1,24 @@
 import streamlit as st
 import urllib.parse as up
 from typing import Any
-from tantivy import Query, Index, SchemaBuilder
+from tantivy import Index
 from streamlit.components.v1 import html
 
-
 # Konstanten
-INDEX_PATH = "neu"  # bestehendes Tantivy-Index-Verzeichnis
 TOP_K = 60          # wie viele Ergebnisse angezeigt werden sollen
 
+#Tokenisierung um in der Suche auch nach Wortteilen suchen zu können
+def ngrams(word, n=3):
+    word = word.lower()
+    return [word[i:i+n] for i in range(len(word)-n+1)]
 
-schema_builder = SchemaBuilder()
-schema_builder.add_integer_field("id", stored=True, indexed=True)
-schema_builder.add_integer_field("steamId", stored=True, indexed=True)
-schema_builder.add_text_field("title", stored=True)
-schema_builder.add_text_field("description", stored=True, tokenizer_name='en_stem')  # Mehrwertiges Textfeld
-schema_builder.add_text_field("description_short", stored=True, tokenizer_name='en_stem')  # Mehrwertiges Textfeld
-schema_builder.add_text_field("genres", stored=True)
-schema_builder.add_text_field("publisher", stored=True)
-schema_builder.add_text_field("platforms", stored=True)
-schema_builder.add_text_field("url", stored=True)
-schema_builder.add_text_field("image", stored=True)
-schema_builder.add_text_field("trailer", stored=True)
-schema_builder.add_date_field("release_date", stored=True)
-schema = schema_builder.build()
-
-index_path = "neu"
-index = Index(schema, path=str(index_path))
+index = Index.open("neu")
 searcher = index.searcher()
 
 with open("styles.html", "r") as f:
     css = f.read()
 
 st.markdown(css, unsafe_allow_html=True)
-
 
 # Hilfsfunktion für Seitenrouting mit Anfrageparametern.
 # Gibt die Query-Parameter der aktuellen Seite als Dictionary zurück.
@@ -177,12 +162,16 @@ if st.button("Suchen", type="primary"):
 
 # Raster (Grid) darstellen, wenn q existiert
 if q:
-    # query = Query.pre_query("title", q.lower())
-    # hits = searcher.search(query, TOP_K).hits
-    
-    query = index.parse_query(f"title:*{q.lower()}*")
-    #query = index.parse_query(f"title:{q.lower()}*")
+    # Query in 3‑Grams zerlegen
+    grams = ngrams(q.lower(), 3)
 
+    # Wenn der Suchbegriff kürzer als 3 Zeichen ist → direkt suchen
+    if len(q) < 3:
+        query = index.parse_query(f"title_ngrams:{q.lower()}")
+    else:
+        # Alle N‑Grams müssen vorkommen → AND-Verknüpfung
+        q_parts = " AND ".join([f"title_ngrams:{g}" for g in grams])
+        query = index.parse_query(q_parts)
 
     hits = searcher.search(query, TOP_K).hits
 
@@ -210,13 +199,10 @@ if q:
                     genre_html += f'<span class="tag">{tag}</span>'
                 genre_html += "</div>"
 
-
             extra = f'<div class="extra"><p>{description_short}{genre_html}</p></div>'       
             card = f'<div class="hover"><a href="{href}" target="_self">{img_tag}<div class="text"><div class="t">{title}</div>{extra}</div></a></div>'
 
             cards_html.append(f'<div class="suche card">{card}</div>')
-
-            #cards_html.append(f'<a class="card" href="{href}"target="_self">{img_tag}<div class="t">{title}</div></a>')
         cards_html.append("</div>")
         st.markdown("".join(cards_html), unsafe_allow_html=True)
 else:

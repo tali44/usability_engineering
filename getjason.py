@@ -1,4 +1,9 @@
-import json
+"""
+Dieses Skript liest aus der SteamDB über die CSV-Datei (steamId.csv) Daten aus und speichert sie in .txt-Dateien.
+Diese wurden aufgrund der Größe in 4000-Schritte geteilt und manuell in eine data.txt zusammengefügt.
+Die data.txt ist zu groß, als dass man sie per github teilen könnte.
+"""
+
 import pandas as pd
 import requests 
 from tqdm.auto import tqdm
@@ -6,18 +11,18 @@ import time
 
 # Basis-URLs für SteamDB-Requests
 STEAM_API = "https://store.steampowered.com/api/appdetails?appids="
-VON_STEAM_ID = 0     # Anfangsnummer eingeben --> beim nächsten indizieren wäre das 4582
-BIS_STEAM_ID = 6    # Endnummer eingeben, i guess in so 4000 Abständen wäre ganz ok
+VON_STEAM_ID = 0        # Anfangsnummer eingeben
+BIS_STEAM_ID = 6        # Endnummer eingeben, i guess in so 4000 Abständen wäre ganz ok
 
 # HTTP-Header inkl. Bearer-Token für SteamDB
 headers = {
     "accept": "application/json"
 }
 
-file = 'steamID_favs.csv'  # Pfad zur SteamID-Liste (muss existieren)
+file = 'steamID.csv'                    # Pfad zur SteamID-Liste
 data = pd.read_csv(file)
 
-outputpath = "data2.txt"
+outputpath = "124000-128000.txt"        # titel der .txt ändern, benennen nach den Zeilen
 with open(outputpath,"a", encoding = "UTF-8") as f:     #"a" --> öffnet Datei im apend mode   
     for idx,row in tqdm(data[VON_STEAM_ID:BIS_STEAM_ID].iterrows(),total = len(data[VON_STEAM_ID:BIS_STEAM_ID]),desc="Fetche alle Antworten von der Steam API."):
         if row.get("steamid") is None:
