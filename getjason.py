@@ -11,18 +11,19 @@ import time
 
 # Basis-URLs für SteamDB-Requests
 STEAM_API = "https://store.steampowered.com/api/appdetails?appids="
-VON_STEAM_ID = 0        # Anfangsnummer eingeben
-BIS_STEAM_ID = 6        # Endnummer eingeben, i guess in so 4000 Abständen wäre ganz ok
+VON_STEAM_ID = 0        # Anfangsnummer
+BIS_STEAM_ID = 6        # Endnummer
 
 # HTTP-Header inkl. Bearer-Token für SteamDB
 headers = {
     "accept": "application/json"
 }
 
-file = 'steamID.csv'                    # Pfad zur SteamID-Liste
+# Pfad zur SteamID-Liste
+file = 'steamID.csv'                    
 data = pd.read_csv(file)
 
-outputpath = "124000-128000.txt"        # titel der .txt ändern, benennen nach den Zeilen
+outputpath = "124000-128000.txt"
 with open(outputpath,"a", encoding = "UTF-8") as f:     #"a" --> öffnet Datei im apend mode   
     for idx,row in tqdm(data[VON_STEAM_ID:BIS_STEAM_ID].iterrows(),total = len(data[VON_STEAM_ID:BIS_STEAM_ID]),desc="Fetche alle Antworten von der Steam API."):
         if row.get("steamid") is None:

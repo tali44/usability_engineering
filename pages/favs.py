@@ -142,8 +142,7 @@ if (Hls.isSupported()) {{
 </script>
 </body>
 </html>""".replace("&","&amp;").replace("<","&lt;").replace(">","&gt;").replace('"','&quot;').replace("'","&#039;")
-        
-        
+   
     html = ['<div class="layout">']
 
     if trailer is not None:
@@ -155,7 +154,6 @@ if (Hls.isSupported()) {{
     st.markdown("".join(html), unsafe_allow_html=True)
 
     st.stop()
-
 
 # Hauptseite
 st.title("Favoriten der Redaktion")
@@ -172,7 +170,6 @@ ids = [5497, 7027, 5667, 8296, 6641, 127025, 58365, 60799, 9969, 10107]
 # A&T Tavern: 2683150 (60799)
 # Medieval Dynasty: 1129580 (9969)
 # It takes Two: 1426210 (10107)
-
 
 cards_html = ['<div class="grid_favs">']
 

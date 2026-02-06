@@ -5,7 +5,7 @@ from tantivy import Index
 from streamlit.components.v1 import html
 
 # Konstanten
-TOP_K = 60          # wie viele Ergebnisse angezeigt werden sollen
+TOP_K = 60          # Anzahl der Ergebnisse, die angezeigt werden sollen
 
 #Tokenisierung um in der Suche auch nach Wortteilen suchen zu können
 def ngrams(word, n=3):
@@ -20,9 +20,9 @@ with open("styles.html", "r") as f:
 
 st.markdown(css, unsafe_allow_html=True)
 
-# Hilfsfunktion für Seitenrouting mit Anfrageparametern.
-# Gibt die Query-Parameter der aktuellen Seite als Dictionary zurück.
-# Falls `st.query_params` nicht verfügbar ist, wird ein leeres Dictionary zurückgegeben.
+# Hilfsfunktion für Seitenrouting mit Anfrageparametern
+# Gibt die Query-Parameter der aktuellen Seite als Dictionary zurück
+# Falls `st.query_params` nicht verfügbar ist, wird ein leeres Dictionary zurückgegeben
 def get_qp() -> dict[str, Any]:
     return getattr(st, "query_params", {})
 
@@ -131,9 +131,7 @@ if (Hls.isSupported()) {{
 </script>
 </body>
 </html>""".replace("&","&amp;").replace("<","&lt;").replace(">","&gt;").replace('"','&quot;').replace("'","&#039;")
-        
-        
-
+                
     html = ['<div class="layout">']
 
     if trailer is not None:
@@ -145,7 +143,6 @@ if (Hls.isSupported()) {{
     st.markdown("".join(html), unsafe_allow_html=True)
 
     st.stop()
-
 
 # Hauptseite
 st.title("Video Spiele")
