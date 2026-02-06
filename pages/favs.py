@@ -88,7 +88,7 @@ if view == "detail" and selected_id:
         st.query_params.update({view: "grid"})
         st.query_params.pop("id", None)
         st.rerun()
-    
+
     st.title(title)
 
     video_html = f"""<!DOCTYPE html>
