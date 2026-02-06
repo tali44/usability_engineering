@@ -149,28 +149,50 @@ st.title("Video Spiele")
 
 # Verarbeitet die aktuelle Anfrage (Query):
 
-query_text = st.text_input(" ", value=q, placeholder="z. B. Sea of Thieves, The Witcher, etc. ...")
+col_left, col_center, col_right = st.columns([1, 2, 1])
+
+with col_center:
+
+    col_input, col_button = st.columns([5, 1])
+
+    with col_input:
+        query_text = st.text_input("", value=q, placeholder="Suche nach einem Spiel z. B. Sea of Thieves, The Witcher, etc. ...", label_visibility="collapsed", key="search_input")
+
+    with col_button:
+        button_triggered = st.button("Suchen", type="primary", key="search_button")
+
+
 
 enter_triggered = query_text != q and query_text != ""
-button_triggered = st.button("Suchen", type="primary")
 
 if enter_triggered or button_triggered:
-    st.query_params.update({"q": up.quote(query_text, safe=''), "view": "grid"})
+    #st.query_params.update({"q": up.quote(query_text, safe=''), "view": "grid"})
+    st.query_params.update({"q": query_text, "view": "grid"})
+
     st.rerun()
 
 
 # Raster (Grid) darstellen, wenn q existiert
 if q:
-    # Query in 3‑Grams zerlegen
-    grams = ngrams(q.lower(), 3)
+    # Eingabe in Wörter splitten
+    words = q.lower().split()
 
-    # Wenn der Suchbegriff kürzer als 3 Zeichen ist → direkt suchen
-    if len(q) < 3:
-        query = index.parse_query(f"title_ngrams:{q.lower()}")
-    else:
-        # Alle N‑Grams müssen vorkommen → AND-Verknüpfung
-        q_parts = " AND ".join([f"title_ngrams:{g}" for g in grams])
-        query = index.parse_query(q_parts)
+    query_parts = []
+
+    for w in words:
+        if len(w) < 3:
+            # 1- oder 2-Buchstaben-Wörter direkt suchen
+            query_parts.append(f"title_ngrams:{w}")
+        else:
+            # 3-Grams erzeugen (auch für Wörter mit Länge 3!)
+            grams = ngrams(w, 3)
+            part = " AND ".join([f"title_ngrams:{g}" for g in grams])
+            query_parts.append(f"({part})")
+
+    final_query = " AND ".join(query_parts)
+
+    query = index.parse_query(final_query)
+
 
     hits = searcher.search(query, TOP_K).hits
 
@@ -204,5 +226,3 @@ if q:
             cards_html.append(f'<div class="suche card">{card}</div>')
         cards_html.append("</div>")
         st.markdown("".join(cards_html), unsafe_allow_html=True)
-else:
-    st.info("Gib einen Suchbegriff ein und klicke auf **Suchen**.")
