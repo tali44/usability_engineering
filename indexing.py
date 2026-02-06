@@ -31,7 +31,7 @@ headers = {
     "accept": "application/json"
 }
 
-# Tokinizierung definieren
+# Tokenisierung definieren
 def ngrams(word, n=3):
     word = word.lower()
     return [word[i:i+n] for i in range(len(word)-n+1)]
@@ -54,10 +54,10 @@ schema_builder.add_date_field("release_date", stored=True)
 schema = schema_builder.build()
 
 
-# 2) Index anlegen/alten löschen und neu ersetllen
+# 2) Index anlegen/alten löschen und neu erstellen
 index_path = "neu"
 
-# wenn schon ein index unter dem pfad besteht, wird er gelöscht und ein neuer erstellt
+# Wenn schon ein Index unter dem Pfad besteht, wird dieser gelöscht und ein neuer erstellt
 if os.path.exists(index_path): 
     shutil.rmtree(index_path) 
     print("Alter Index gelöscht.") 
@@ -72,14 +72,13 @@ writer = index.writer()  # Writer für Batch-Schreibvorgänge
 # Nach dem indizieren werden IDs vermerkt, damit nichts doppelt indiziert wird
 processed_steamIDs = set()
 
-
 # 3) Dokumente aufbauen und in den Index schreiben
 with open("data.txt", "r", encoding="UTF-8") as f:
     for idx, line in enumerate(f):
         # Neues Tantivy-Dokument
         doc = Document()
 
-        # sonderzeichen werden aus dem titel gelöscht
+        # Sonderzeichen werden aus dem Titel gelöscht
         def clean_title(t): 
             t = t.replace("®", "") 
             t = t.replace("™", "") 
@@ -116,7 +115,7 @@ with open("data.txt", "r", encoding="UTF-8") as f:
                 title = clean_title(title)
                 doc.add_text("title", title) 
                 
-                # N‑Grams erzeugen 
+                # n-grams erzeugen 
                 for ng in ngrams(title, 3): 
                     doc.add_text("title_ngrams", ng)
 
@@ -177,7 +176,7 @@ with open("data.txt", "r", encoding="UTF-8") as f:
             processed_steamIDs.add(steam_ID)        #IDs als verarbeitet markieren
                         
         except Exception as e:
-            # Fehler in der STEAM_DB-Abfrage protokollieren, Indexierung dennoch fortsetzen
+            # Fehler in der STEAM_DB-Abfrage protokollieren, Indizierung dennoch fortsetzen
             print(traceback.format_exc())
 
         # Fertiges Dokument in den Index schreiben
