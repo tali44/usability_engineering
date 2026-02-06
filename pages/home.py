@@ -150,15 +150,17 @@ if (Hls.isSupported()) {{
 # Hauptseite
 st.title("Video Spiele")
 
-# Verarbeitet die aktuelle Anfrage (Query);
+# Verarbeitet die aktuelle Anfrage (Query):
+
 query_text = st.text_input(" ", value=q, placeholder="z. B. Sea of Thieves, The Witcher, etc. ...")
-if st.button("Suchen", type="primary"):
-    if not query_text:
-        st.info("Bitte gib einen Suchbegriff ein.")
-    else:
-        # Speichert die Anfrageparameter und lädt die Seite erneut
-        st.query_params.update({"q": up.quote(query_text, safe=''), "view": "grid"})
-        st.rerun()
+
+enter_triggered = query_text != q and query_text != ""
+button_triggered = st.button("Suchen", type="primary")
+
+if enter_triggered or button_triggered:
+    st.query_params.update({"q": up.quote(query_text, safe=''), "view": "grid"})
+    st.rerun()
+
 
 # Raster (Grid) darstellen, wenn q existiert
 if q:
