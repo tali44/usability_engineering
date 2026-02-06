@@ -4,6 +4,7 @@ from typing import Any
 from tantivy import Query, Index, SchemaBuilder
 from streamlit.components.v1 import html
 
+
 # Konstanten
 INDEX_PATH = "neu"  # bestehendes Tantivy-Index-Verzeichnis
 TOP_K = 60          # wie viele Ergebnisse angezeigt werden sollen
@@ -12,7 +13,7 @@ TOP_K = 60          # wie viele Ergebnisse angezeigt werden sollen
 schema_builder = SchemaBuilder()
 schema_builder.add_integer_field("id", stored=True, indexed=True)
 schema_builder.add_integer_field("steamId", stored=True, indexed=True)
-schema_builder.add_text_field("title", stored=True, tokenizer_name='en_stem')
+schema_builder.add_text_field("title", stored=True)
 schema_builder.add_text_field("description", stored=True, tokenizer_name='en_stem')  # Mehrwertiges Textfeld
 schema_builder.add_text_field("description_short", stored=True, tokenizer_name='en_stem')  # Mehrwertiges Textfeld
 schema_builder.add_text_field("genres", stored=True)
@@ -176,7 +177,13 @@ if st.button("Suchen", type="primary"):
 
 # Raster (Grid) darstellen, wenn q existiert
 if q:
-    query = Query.term_query(schema, "title", q)
+    # query = Query.pre_query("title", q.lower())
+    # hits = searcher.search(query, TOP_K).hits
+    
+    query = index.parse_query(f"title:*{q.lower()}*")
+    #query = index.parse_query(f"title:{q.lower()}*")
+
+
     hits = searcher.search(query, TOP_K).hits
 
     if not hits:

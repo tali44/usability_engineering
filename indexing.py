@@ -37,7 +37,7 @@ headers = {
 schema_builder = SchemaBuilder()
 schema_builder.add_integer_field("id", stored=True, indexed=True)
 schema_builder.add_integer_field("steamId", stored=True, indexed=True)
-schema_builder.add_text_field("title", stored=True, tokenizer_name='en_stem')
+schema_builder.add_text_field("title", stored=True)
 schema_builder.add_text_field("description", stored=True, tokenizer_name='en_stem')
 schema_builder.add_text_field("description_short", stored=True, tokenizer_name='en_stem')
 schema_builder.add_text_field("genres", stored=True)
