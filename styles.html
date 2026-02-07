@@ -15,29 +15,13 @@
   border-color: #4275A8;
 }
 
-.stAlert {
-  background-color: #AAD1F8;
-  border: 1px solid #163451; 
-  border-radius: 10px;
-}
-
-.st-emotion-cache-1krtkoa {
-  background-color: #4275a8;
-  color: rgb(255, 255, 255);
-  border: 1px solid #163451;  
-}
-
-.st-emotion-cache-1krtkoa:hover {
-  background-color: #6EB7FF;
-  border: 1px solid #4275A8;
-}
-
 .grid {
   display: grid;
   grid-template-columns: 30% 30% 30%;
   justify-content: center;
   column-gap: 2.5%;
   row-gap: 2.5em;
+  padding-top: 50px;
 }
 
 .grid_favs {
@@ -65,9 +49,6 @@
 }
 
 .suche{
-  /* display: grid;
-  grid-template-columns: 65% 33%;
-  gap: 20px; */
   position: relative;
 }
 
@@ -164,9 +145,25 @@ header[data-testid="stHeader"] {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+.stButton:not(.stButtonGroup) button {
+  background-color: #05dfa5 !important;
+  color: #fff !important;
+  border: none;
+}
 
-.stButton button{
- background-color: #05dfa5 !important;
+.stButton:not(.stButtonGroup) button:hover{
+  background-color: #12bf91 !important;
+  border: none;
+}
+
+.stButton:not(.stButtonGroup) button[data-testid="stBaseButton-secondary"] {
+    background-color: #df0559 !important;
+    border: none;
+}
+
+.stButton:not(.stButtonGroup) button[data-testid="stBaseButton-secondary"]:hover {
+    background-color: #b41150 !important;
+    border: none;
 }
 
 .layout{
@@ -207,27 +204,40 @@ header[data-testid="stHeader"] {
 }
 
 .stButtonGroup{
-  padding-bottom: 50px;
+  padding-top: 15px;
 }
 
-.stButtonGroup button{
+.stButtonGroup button[kind="pills"]{
   background-color: #000b15 !important;
   color: #fff !important;              
   border: 1px solid #0F2C4A !important;
   padding: 6px 14px !important;
 }
 
-.stButtonGroup button:hover{
+.stButtonGroup button[kind="pills"]:hover{
   color: #05dfa5 !important;
 }
 
 .stButtonGroup button[kind="pillsActive"]{
   background-color: #05dfa5 !important;
   border: 1px solid #05dfa5 !important;
+  color: #fff !important;
 }
 
 .stButtonGroup button[kind="pillsActive"]:hover{
   color: #0F2C4A !important;
+}
+
+.keineTitel{
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  background-color: #df0559;
+  border-radius: 10px;
+  width: 30%;
+  justify-self: center;
+  height: 32px;
+  line-height: 32px;
 }
 
 </style>

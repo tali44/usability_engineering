@@ -27,6 +27,17 @@ q = get_qp().get("q", "")
 view = get_qp().get("view")
 selected_id = get_qp().get("id")
 
+if st.session_state.get("reset_all"):
+    st.session_state["search_input"] = ""
+    st.query_params.clear()
+    q = ""
+    st.session_state["genres_pills"] = []
+    st.session_state["modus_pills"] = []
+
+    st.session_state["reset_all"] = False
+
+
+
 # Unterseite
 if view == "detail" and selected_id:
     q_t = index.parse_query(selected_id, default_field_names=["id"])
@@ -48,7 +59,7 @@ col_left, col_center, col_right = st.columns([1, 2, 1])
 
 with col_center:
 
-    col_input, col_button = st.columns([5, 1])
+    col_input, col_button, col_clear= st.columns([5, 1, 1])
 
     with col_input:
         query_text = st.text_input("", value=q, placeholder="Suche nach einem Spiel z. B. Sea of Thieves, The Witcher, etc. ...", label_visibility="collapsed", key="search_input")
@@ -56,10 +67,18 @@ with col_center:
     with col_button:
         button_triggered = st.button("Suchen", type="primary", key="search_button", width="stretch")
 
+    with col_clear:
+        clear_triggered = st.button("Löschen", key="clear_button", width="stretch")
+
+    if clear_triggered:
+        st.session_state["reset_all"] = True
+        st.rerun()
+
     genre_opt = ["Action", "Adventure", "Casual", "Indie", "Racing", "RPG", "Simulation", "Strategy"]
     modus_opt = ["Multiplayer", "Free to play"]
-    selected_genres = st.pills("Genres", genre_opt, selection_mode="multi", label_visibility="collapsed", width="stretch")
-    selected_modus = st.pills("Modus", modus_opt, selection_mode="multi", label_visibility="collapsed", width="stretch")
+    selected_genres = st.pills("Genres", genre_opt, selection_mode="multi", label_visibility="collapsed", width="stretch", key="genres_pills")
+    selected_modus = st.pills("Modus", modus_opt, selection_mode="multi", label_visibility="collapsed", width="stretch", key="modus_pills")
+
 
 enter_triggered = query_text != q and query_text != ""
 
@@ -110,7 +129,7 @@ if q or selected_genres or selected_modus:
     hits = searcher.search(query, TOP_K).hits
 
     if not hits:
-        st.warning("Keine Ergebnisse gefunden.")
+        st.markdown("<div class='keineTitel'><p>Keine Ergebnisse gefunden!</p></div>", unsafe_allow_html=True)
     else:
         cards_html = ['<div class="grid">']
 
