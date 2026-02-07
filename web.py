@@ -15,11 +15,10 @@ col1, col2, col3 = st.columns(3)
 # Seiten festlegen
 page1 = st.Page("pages/home.py", title="Home")
 page2 = st.Page("pages/favs.py", title="Favoriten")
-page3 = st.Page("pages/wishlist.py", title="Wunschliste")
 
 # Navigationsstruktur festlegen
 pages_config = {
-    "": [page1, page2, page3]
+    "": [page1, page2]
 }
 
 # CSS einlesen
