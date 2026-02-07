@@ -93,9 +93,16 @@ if (Hls.isSupported()) {{
 
     if trailer is not None:
         iframe = f'<iframe class="trailer" srcdoc="{video_html}" allow="accelerometer; ambient-light-sensor; autoplay; battery; camera; clipboard-write; document-domain; encrypted-media; fullscreen; geolocation; gyroscope; layout-animations; legacy-image-formats; magnetometer; microphone; midi; oversized-images; payment; picture-in-picture; publickey-credentials-get; sync-xhr; usb; vr ; wake-lock; xr-spatial-tracking"></iframe>'
+    else:
+        iframe = f'<img src="{image_url}" loading="lazy" alt="poster">' if image_url else ""
+
+    if url == "keine Angabe":
+        web_url = f'<p class="link">{url}</p>'
+    else:
+        web_url = f'<a class="link" href="{url}"><p>{url}</p></a>'
 
     html.append(f'<div class="column_l">{iframe}<p>{description}</p></div>')
-    html.append(f'<div class="column_r"><p>Genres:</p><p>{genre_html}</p><p>Publisher:</p><p>{publisher_html}</p><p>Für Platformen verfügbar:</p><p>{platform_html}</p><p>Link zur Website:</p><a class="link" href="{url}"><p>{url}</p></a><p>Erscheinungsdatum:</p><p>{date}</p></div>')
+    html.append(f'<div class="column_r"><p>Genres:</p><p>{genre_html}</p><p>Publisher:</p><p>{publisher_html}</p><p>Für Platformen verfügbar:</p><p>{platform_html}</p><p>Link zur Website:</p>{web_url}<p>Erscheinungsdatum:</p><p>{date}</p></div>')
     html.append("</div>")
     st.markdown("".join(html), unsafe_allow_html=True)
 
