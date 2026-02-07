@@ -165,7 +165,7 @@ header[data-testid="stHeader"] {
 }
 
 
-button{
+.stButton button{
  background-color: #05dfa5 !important;
 }
 
@@ -206,8 +206,28 @@ button{
   opacity: 1;
 }
 
-
- .st-emotion-cache-zh2fnc{  /* such-button breite*/
-  width: 100% !important;
+.stButtonGroup{
+  padding-bottom: 50px;
 }
+
+.stButtonGroup button{
+  background-color: #000b15 !important;
+  color: #fff !important;              
+  border: 1px solid #0F2C4A !important;
+  padding: 6px 14px !important;
+}
+
+.stButtonGroup button:hover{
+  color: #05dfa5 !important;
+}
+
+.stButtonGroup button[kind="pillsActive"]{
+  background-color: #05dfa5 !important;
+  border: 1px solid #05dfa5 !important;
+}
+
+.stButtonGroup button[kind="pillsActive"]:hover{
+  color: #0F2C4A !important;
+}
+
 </style>
