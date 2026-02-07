@@ -12,7 +12,6 @@ def render_detail_page(doc, q):
     trailer = doc["trailer"][0] if doc["trailer"] else None
     date = doc["release_date"][0] if doc["release_date"] else "keine Angabe"
 
-    
     if publisher is not None:
        publisher_html = "<div>"
        for tag in publisher:

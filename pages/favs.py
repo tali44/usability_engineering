@@ -2,7 +2,6 @@ import streamlit as st
 import urllib.parse as up
 from typing import Any
 from tantivy import Index
-from streamlit.components.v1 import html
 from detail import render_detail_page
 
 index = Index.open("neu")
@@ -10,14 +9,11 @@ searcher = index.searcher()
 
 with open("styles.html", "r") as f:
     css = f.read()
-
 st.markdown(css, unsafe_allow_html=True)
 
-# Hilfsfunktion für Seitenrouting mit Anfrageparametern.
-# Gibt die Query-Parameter der aktuellen Seite als Dictionary zurück.
-# Falls `st.query_params` nicht verfügbar ist, wird ein leeres Dictionary zurückgegeben.
 def get_qp() -> dict[str, Any]:
     return getattr(st, "query_params", {})
+
 
 # (Letzte) Nutzeranfrage, die in den Session-Parametern gespeichert ist
 q = get_qp().get("q", "")
@@ -61,7 +57,6 @@ if view == "detail" and selected_id:
     score, address = hits[0]
     doc = searcher.doc(address)
     render_detail_page(doc, q)
-
 
 
 # Hauptseite

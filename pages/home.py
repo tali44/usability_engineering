@@ -1,10 +1,7 @@
 import streamlit as st
-import urllib.parse as up
 from typing import Any
 from tantivy import Index
-from streamlit.components.v1 import html
 from detail import render_detail_page
-
 
 # Konstanten
 TOP_K = 100          # Anzahl der Ergebnisse, die angezeigt werden sollen
@@ -19,12 +16,8 @@ searcher = index.searcher()
 
 with open("styles.html", "r") as f:
     css = f.read()
-
 st.markdown(css, unsafe_allow_html=True)
 
-# Hilfsfunktion für Seitenrouting mit Anfrageparametern
-# Gibt die Query-Parameter der aktuellen Seite als Dictionary zurück
-# Falls `st.query_params` nicht verfügbar ist, wird ein leeres Dictionary zurückgegeben
 def get_qp() -> dict[str, Any]:
     return getattr(st, "query_params", {})
 
@@ -50,8 +43,6 @@ if view == "detail" and selected_id:
 
 # Hauptseite
 st.title("Video Spiele")
-
-# Verarbeitet die aktuelle Anfrage (Query):
 
 col_left, col_center, col_right = st.columns([1, 2, 1])
 
@@ -102,6 +93,7 @@ if q or selected_genres or selected_modus:
         for m in selected_modus:
             modus_filters.append(f'genres:"{m}"')
 
+    # Suchen kombinieren
     all_filters = []
 
     if query_parts:
@@ -120,7 +112,6 @@ if q or selected_genres or selected_modus:
     if not hits:
         st.warning("Keine Ergebnisse gefunden.")
     else:
-        # Erstelle das Grid mit klickbaren Thumbnails
         cards_html = ['<div class="grid">']
 
         for score, addr in hits:
