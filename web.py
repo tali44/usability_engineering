@@ -5,12 +5,18 @@ from tantivy import Query, Index, SchemaBuilder
 
 
 st.set_page_config(layout="wide")
-st.session_state["slider"] = None
-st.session_state["pill"] = None
-st.session_state["checkbox"] = False
-st.session_state["text"] = None
-st.session_state["optionen"] = None
-col1, col2, col3 = st.columns(3)
+
+if "slider" not in st.session_state:
+    st.session_state["slider"] = None
+if "pill" not in st.session_state:
+    st.session_state["pill"] = None
+if "checkbox" not in st.session_state:
+    st.session_state["checkbox"] = False
+if "text" not in st.session_state:
+    st.session_state["text"] = None
+if "optionen" not in st.session_state:
+    st.session_state["optionen"] = None
+
 
 # Seiten festlegen
 page1 = st.Page("pages/home.py", title="Home")

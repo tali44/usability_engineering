@@ -34,7 +34,8 @@ def render_detail_page(doc, q):
         st.query_params.update({"view": "grid", "q": q})
         st.query_params.pop("id", None)
         st.rerun()
-
+    
+    
     st.title(title)
 
     video_html = f"""<!DOCTYPE html>
@@ -101,9 +102,11 @@ if (Hls.isSupported()) {{
     else:
         web_url = f'<a class="link" href="{url}"><p>{url}</p></a>'
 
+    steam_id = doc["steamId"][0]
+
+
     html.append(f'<div class="column_l"><p class="bold">Genres:</p>{genre_html}<p class="bold">Publisher:</p>{publisher_html}<p class="bold">Available for platforms:</p>{platform_html}<p class="bold">Website:</p>{web_url}<p class="bold">Date:</p><p>{date}</p></div>')
     html.append(f'<div class="column_r">{iframe}<p>{description}</p></div>')
     html.append("</div>")
-    st.markdown("".join(html), unsafe_allow_html=True)
 
-    st.stop()
+    st.markdown("".join(html), unsafe_allow_html=True)

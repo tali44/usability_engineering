@@ -11,6 +11,7 @@ def ngrams(word, n=3):
     word = word.lower()
     return [word[i:i+n] for i in range(len(word)-n+1)]
 
+
 index = Index.open("neu")
 searcher = index.searcher()
 
@@ -27,6 +28,7 @@ q = get_qp().get("q", "")
 view = get_qp().get("view")
 selected_id = get_qp().get("id")
 
+
 if st.session_state.get("reset_all"):
     st.session_state["search_input"] = ""
     st.query_params.clear()
@@ -40,7 +42,7 @@ if st.session_state.get("reset_all"):
 
 # Unterseite
 if view == "detail" and selected_id:
-    q_t = index.parse_query(selected_id, default_field_names=["id"])
+    q_t = index.parse_query(f"id:{selected_id}", default_field_names=["id"])
     hits = searcher.search(q_t, limit=1).hits
 
     if not hits:
@@ -49,7 +51,9 @@ if view == "detail" and selected_id:
 
     score, address = hits[0]
     doc = searcher.doc(address)
+
     render_detail_page(doc, q)
+    st.stop()
 
 
 # Hauptseite
@@ -62,7 +66,7 @@ with col_center:
     col_input, col_button, col_clear= st.columns([5, 1, 1])
 
     with col_input:
-        query_text = st.text_input("", value=q, placeholder="Search a game e. g. Sea of Thieves, The Witcher, etc. ...", label_visibility="collapsed", key="search_input")
+        query_text = st.text_input(" ", value=q, placeholder="Search a game e. g. Sea of Thieves, The Witcher, etc. ...", label_visibility="collapsed", key="search_input")
 
     with col_button:
         button_triggered = st.button("Search", type="primary", key="search_button", width="stretch")
@@ -136,12 +140,16 @@ if q or selected_genres or selected_modus:
         for score, addr in hits:
             doc = searcher.doc(addr)
 
+
             doc_id = doc["id"][0]
+            href = f"?view=detail&id={doc_id}&q={q}"
+
+            #doc_id = doc["id"][0]
             title = doc["title"][0]
             img = doc["image"]
             image_url = (img[0]) if img else ""
             description_short = doc["description_short"][0] if doc["description_short"] else ""
-            href = f"?view=detail&id={doc_id}&q={q}"
+            #href = f"?view=detail&id={doc_id}&q={q}"
             img_tag = f'<img src="{image_url}" loading="lazy" alt="poster">' if image_url else ""
             genres = doc["genres"] if doc["genres"] else "no data"
 
@@ -151,7 +159,7 @@ if q or selected_genres or selected_modus:
                     genre_html += f'<span class="tag">{tag}</span>'
                 genre_html += "</div>"
 
-            extra = f'<div class="extra"><p>{description_short}{genre_html}</p></div>'       
+            extra = f'<div class="extra"><p>{description_short}{genre_html}</p></div>'  
             card = f'<div class="hover"><a href="{href}" target="_self">{img_tag}<div class="text"><div class="t">{title}</div>{extra}</div></a></div>'
 
             cards_html.append(f'<div class="suche card">{card}</div>')
