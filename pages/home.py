@@ -129,7 +129,7 @@ if q or selected_genres or selected_modus:
     hits = searcher.search(query, TOP_K).hits
 
     if not hits:
-        st.markdown("<div class='keineTitel'><p>No games found. Try again!</p></div>", unsafe_allow_html=True)
+        st.markdown("<div class='keineTitel'><p>No games found!</p></div>", unsafe_allow_html=True)
     else:
         cards_html = ['<div class="grid">']
 
