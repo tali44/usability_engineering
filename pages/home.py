@@ -66,7 +66,7 @@ with col_center:
     col_input, col_button, col_clear= st.columns([5, 1, 1])
 
     with col_input:
-        query_text = st.text_input("", value=q, placeholder="Search a game e. g. Sea of Thieves, The Witcher, etc. ...", label_visibility="collapsed", key="search_input")
+        query_text = st.text_input(" ", value=q, placeholder="Search a game e. g. Sea of Thieves, The Witcher, etc. ...", label_visibility="collapsed", key="search_input")
 
     with col_button:
         button_triggered = st.button("Search", type="primary", key="search_button", width="stretch")
