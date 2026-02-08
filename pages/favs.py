@@ -47,7 +47,7 @@ def render_tags(values):
 
 # Unterseite
 if view == "detail" and selected_id:
-    q_t = index.parse_query(selected_id, default_field_names=["id"])
+    q_t = index.parse_query(f"id:{selected_id}", default_field_names=["id"])
     hits = searcher.search(q_t, limit=1).hits
 
     if not hits:
@@ -56,7 +56,10 @@ if view == "detail" and selected_id:
 
     score, address = hits[0]
     doc = searcher.doc(address)
+
     render_detail_page(doc, q)
+    st.stop()
+
 
 
 # Hauptseite
