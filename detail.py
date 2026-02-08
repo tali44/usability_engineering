@@ -30,7 +30,7 @@ def render_detail_page(doc, q):
            platform_html += f'<span class="tag">{tag}</span>'
        platform_html += "</div>"
 
-    if st.button("Back to overview"):
+    if st.button("Back to Overview"):
         st.query_params.update({"view": "grid", "q": q})
         st.query_params.pop("id", None)
         st.rerun()
@@ -94,15 +94,15 @@ if (Hls.isSupported()) {{
     if trailer is not None:
         iframe = f'<iframe class="trailer" srcdoc="{video_html}" allow="accelerometer; ambient-light-sensor; autoplay; battery; camera; clipboard-write; document-domain; encrypted-media; fullscreen; geolocation; gyroscope; layout-animations; legacy-image-formats; magnetometer; microphone; midi; oversized-images; payment; picture-in-picture; publickey-credentials-get; sync-xhr; usb; vr ; wake-lock; xr-spatial-tracking"></iframe>'
     else:
-        iframe = f'<img src="{image_url}" loading="lazy" alt="poster">' if image_url else ""
+        iframe = f'<img class="no_trailer" src="{image_url}" loading="lazy" alt="poster">' if image_url else ""
 
     if url == "no data":
         web_url = f'<p class="link">{url}</p>'
     else:
         web_url = f'<a class="link" href="{url}"><p>{url}</p></a>'
 
-    html.append(f'<div class="column_l">{iframe}<p>{description}</p></div>')
-    html.append(f'<div class="column_r"><p>Genres:</p><p>{genre_html}</p><p>Publisher:</p><p>{publisher_html}</p><p>Available for platforms:</p><p>{platform_html}</p><p>Website:</p>{web_url}<p>Date:</p><p>{date}</p></div>')
+    html.append(f'<div class="column_l"><p class="bold">Genres:</p>{genre_html}<p class="bold">Publisher:</p>{publisher_html}<p class="bold">Available for platforms:</p>{platform_html}<p class="bold">Website:</p>{web_url}<p class="bold">Date:</p><p>{date}</p></div>')
+    html.append(f'<div class="column_r">{iframe}<p>{description}</p></div>')
     html.append("</div>")
     st.markdown("".join(html), unsafe_allow_html=True)
 
