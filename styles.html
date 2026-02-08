@@ -28,6 +28,38 @@ header[data-testid="stHeader"] {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+                                                      /* BUTTONS HEADER */
+a[data-testid="stTopNavLink"]{ 
+  background-color: #0F2C4A;
+  font-size: 2em;
+}
+
+a[data-testid="stTopNavLink"][aria-current="page"]{
+  background-color: #273f5c;
+}
+
+span[label="Home"]{
+  font-size: 20px;
+  line-height: 40px;
+}
+
+span[label="Editor's picks"]{
+  font-size: 20px;
+  line-height: 40px;
+}
+
+button[kind="header"]{
+  background-color: #0F2C4A;
+  font-size: 20px;
+  line-height: 40px;
+}
+
+/* .stAppDeployButton, .stMainMenu{
+  opacity: 0;
+  pointer-events: none;
+  cursor: default;
+} */
+
                                                       /* BUTTONS */
 .stButton button {
   background-color: #05dfa5 !important;
