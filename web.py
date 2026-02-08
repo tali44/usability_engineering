@@ -14,7 +14,7 @@ col1, col2, col3 = st.columns(3)
 
 # Seiten festlegen
 page1 = st.Page("pages/home.py", title="Home")
-page2 = st.Page("pages/favs.py", title="Favoriten")
+page2 = st.Page("pages/favs.py", title="Editor's picks")
 
 # Navigationsstruktur festlegen
 pages_config = {

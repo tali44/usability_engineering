@@ -39,9 +39,9 @@ def load_doc_by_id(doc_id: str | int):
 
 
 def render_tags(values):
-    """Erzeugt Tag-HTML oder 'keine Angabe'."""
+    """Erzeugt Tag-HTML oder 'no data'."""
     if not values:
-        return '<span class="muted">keine Angabe</span>'
+        return '<span class="muted">no data</span>'
     return "<div>" + "".join(f'<span class="tag">{v}</span>' for v in values) + "</div>"
 
 
@@ -51,7 +51,7 @@ if view == "detail" and selected_id:
     hits = searcher.search(q_t, limit=1).hits
 
     if not hits:
-        st.error("Spiel nicht gefunden.")
+        st.error("Game not found.")
         st.stop()
 
     score, address = hits[0]
@@ -60,7 +60,7 @@ if view == "detail" and selected_id:
 
 
 # Hauptseite
-st.title("Favoriten der Redaktion")
+st.title("Editor's picks")
 
 ids = [5497, 7027, 5667, 8296, 6641, 127025, 58365, 60799, 9969, 10107]
 # Titel: SteamID (id)

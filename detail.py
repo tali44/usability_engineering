@@ -3,14 +3,14 @@ import streamlit as st
 #Unterseiten
 def render_detail_page(doc, q):
     title = doc["title"][0]
-    description = doc["description"][0] if doc["description"] else "keine Angabe"
+    description = doc["description"][0] if doc["description"] else "no data"
     genres = doc["genres"] if doc["genres"] else []
     publisher = doc["publisher"] if doc["publisher"] else []
     platforms = doc["platforms"] if doc["platforms"] else []
     image_url = doc["image"][0] if doc["image"] else ""
-    url = doc["url"][0] if doc["url"] else "keine Angabe"
+    url = doc["url"][0] if doc["url"] else "no data"
     trailer = doc["trailer"][0] if doc["trailer"] else None
-    date = doc["release_date"][0] if doc["release_date"] else "keine Angabe"
+    date = doc["release_date"][0] if doc["release_date"] else "no data"
 
     if publisher is not None:
        publisher_html = "<div>"
@@ -30,7 +30,7 @@ def render_detail_page(doc, q):
            platform_html += f'<span class="tag">{tag}</span>'
        platform_html += "</div>"
 
-    if st.button("Zurück zur Übersicht"):
+    if st.button("Back to overview"):
         st.query_params.update({"view": "grid", "q": q})
         st.query_params.pop("id", None)
         st.rerun()
@@ -96,13 +96,13 @@ if (Hls.isSupported()) {{
     else:
         iframe = f'<img src="{image_url}" loading="lazy" alt="poster">' if image_url else ""
 
-    if url == "keine Angabe":
+    if url == "no data":
         web_url = f'<p class="link">{url}</p>'
     else:
         web_url = f'<a class="link" href="{url}"><p>{url}</p></a>'
 
     html.append(f'<div class="column_l">{iframe}<p>{description}</p></div>')
-    html.append(f'<div class="column_r"><p>Genres:</p><p>{genre_html}</p><p>Publisher:</p><p>{publisher_html}</p><p>Für Platformen verfügbar:</p><p>{platform_html}</p><p>Link zur Website:</p>{web_url}<p>Erscheinungsdatum:</p><p>{date}</p></div>')
+    html.append(f'<div class="column_r"><p>Genres:</p><p>{genre_html}</p><p>Publisher:</p><p>{publisher_html}</p><p>Available for platforms:</p><p>{platform_html}</p><p>Website:</p>{web_url}<p>Date:</p><p>{date}</p></div>')
     html.append("</div>")
     st.markdown("".join(html), unsafe_allow_html=True)
 

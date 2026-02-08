@@ -44,7 +44,7 @@ if view == "detail" and selected_id:
     hits = searcher.search(q_t, limit=1).hits
 
     if not hits:
-        st.error("Spiel nicht gefunden.")
+        st.error("Game not found.")
         st.stop()
 
     score, address = hits[0]
@@ -53,7 +53,7 @@ if view == "detail" and selected_id:
 
 
 # Hauptseite
-st.title("Video Spiele")
+st.title("Videogames")
 
 col_left, col_center, col_right = st.columns([1, 2, 1])
 
@@ -62,13 +62,13 @@ with col_center:
     col_input, col_button, col_clear= st.columns([5, 1, 1])
 
     with col_input:
-        query_text = st.text_input("", value=q, placeholder="Suche nach einem Spiel z. B. Sea of Thieves, The Witcher, etc. ...", label_visibility="collapsed", key="search_input")
+        query_text = st.text_input("", value=q, placeholder="Search a game e. g. Sea of Thieves, The Witcher, etc. ...", label_visibility="collapsed", key="search_input")
 
     with col_button:
-        button_triggered = st.button("Suchen", type="primary", key="search_button", width="stretch")
+        button_triggered = st.button("Search", type="primary", key="search_button", width="stretch")
 
     with col_clear:
-        clear_triggered = st.button("Löschen", key="clear_button", width="stretch")
+        clear_triggered = st.button("Clear", key="clear_button", width="stretch")
 
     if clear_triggered:
         st.session_state["reset_all"] = True
@@ -129,7 +129,7 @@ if q or selected_genres or selected_modus:
     hits = searcher.search(query, TOP_K).hits
 
     if not hits:
-        st.markdown("<div class='keineTitel'><p>Keine Ergebnisse gefunden!</p></div>", unsafe_allow_html=True)
+        st.markdown("<div class='keineTitel'><p>No games found. Try again!</p></div>", unsafe_allow_html=True)
     else:
         cards_html = ['<div class="grid">']
 
@@ -143,7 +143,7 @@ if q or selected_genres or selected_modus:
             description_short = doc["description_short"][0] if doc["description_short"] else ""
             href = f"?view=detail&id={doc_id}&q={q}"
             img_tag = f'<img src="{image_url}" loading="lazy" alt="poster">' if image_url else ""
-            genres = doc["genres"] if doc["genres"] else "keine Angabe"
+            genres = doc["genres"] if doc["genres"] else "no data"
 
             if genres is not None:
                 genre_html = "<div>"
