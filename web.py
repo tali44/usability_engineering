@@ -4,7 +4,10 @@ import streamlit as st
 from tantivy import Query, Index, SchemaBuilder
 
 
-st.set_page_config(layout="wide")
+st.set_page_config(
+    page_title="Videogames",
+    layout="wide"
+)
 
 if "slider" not in st.session_state:
     st.session_state["slider"] = None
@@ -33,6 +36,10 @@ with open("styles.html", "r") as f:
 st.set_page_config(layout="wide")
 st.markdown(css, unsafe_allow_html=True)
 
+st.markdown("""<div class="header_title">Videogames</div>""", unsafe_allow_html=True)
+
 # Navigationsstruktur erstellen
 navigation = st.navigation(pages_config, position="top")
 navigation.run()
+
+st.markdown("""<div class="footer">Wintersemster 2025/26 - Usability Engineering - Talena Thielecke, Smilla Hill</div>""", unsafe_allow_html=True)
