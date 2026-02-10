@@ -30,13 +30,17 @@ def render_detail_page(doc, q):
            platform_html += f'<span class="tag">{tag}</span>'
        platform_html += "</div>"
 
+    st.title(title)
+
+    st.markdown('<div class="back">', unsafe_allow_html=True)
+
     if st.button("Back to Overview"):
         st.query_params.update({"view": "grid", "q": q})
         st.query_params.pop("id", None)
         st.rerun()
-    
-    
-    st.title(title)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
 
     video_html = f"""<!DOCTYPE html>
 <html lang="en">
