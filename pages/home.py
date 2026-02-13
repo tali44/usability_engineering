@@ -63,6 +63,22 @@ col_left, col_center, col_right = st.columns([1, 2, 1])
 
 with col_center:
 
+    qp = get_qp()
+
+    # Query-Parameter auslesen
+    qp_genres = qp.get("genres", "")
+    qp_modus = qp.get("modus", "")
+
+   
+    if view == "grid" and "came_from_detail" in st.session_state:
+        if qp_genres:
+            st.session_state["genres_pills"] = qp_genres.split(",")
+        if qp_modus:
+            st.session_state["modus_pills"] = qp_modus.split(",")
+
+        del st.session_state["came_from_detail"]
+    
+
     col_input, col_button, col_clear= st.columns([5, 1, 1])
 
     with col_input:
@@ -142,14 +158,17 @@ if q or selected_genres or selected_modus:
 
 
             doc_id = doc["id"][0]
-            href = f"?view=detail&id={doc_id}&q={q}"
+            href = (f"?view=detail&id={doc_id}"
+                    f"&q={q}"
+                    f"&genres={','.join(st.session_state.get('genres_pills', []))}"
+                    f"&modus={','.join(st.session_state.get('modus_pills', []))}"
+                    )
 
-            #doc_id = doc["id"][0]
+
             title = doc["title"][0]
             img = doc["image"]
             image_url = (img[0]) if img else ""
             description_short = doc["description_short"][0] if doc["description_short"] else ""
-            #href = f"?view=detail&id={doc_id}&q={q}"
             img_tag = f'<img src="{image_url}" loading="lazy" alt="poster">' if image_url else ""
             genres = doc["genres"] if doc["genres"] else "no data"
 

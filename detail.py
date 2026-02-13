@@ -2,6 +2,23 @@ import streamlit as st
 
 #Unterseiten
 def render_detail_page(doc, q):
+
+    qp = st.query_params
+    qp_genres = qp.get("genres", "")
+    qp_modus = qp.get("modus", "")
+
+    if qp_genres:
+        new = qp_genres.split(",")
+        if st.session_state.get("genres_pills") != new:
+            st.session_state["genres_pills"] = new
+
+    if qp_modus:
+        new = qp_modus.split(",")
+        if st.session_state.get("modus_pills") != new:
+            st.session_state["modus_pills"] = new
+
+
+
     title = doc["title"][0]
     description = doc["description"][0] if doc["description"] else "no data"
     genres = doc["genres"] if doc["genres"] else []
@@ -30,16 +47,16 @@ def render_detail_page(doc, q):
            platform_html += f'<span class="tag">{tag}</span>'
        platform_html += "</div>"
 
-    st.title(title)
-
-    st.markdown('<div class="back">', unsafe_allow_html=True)
-
-    if st.button("Back to Overview"):
-        st.query_params.update({"view": "grid", "q": q})
+    if st.button("Back to Overview", key="back"):
+        st.query_params.update({
+            "view": "grid",
+            "q": q,
+            "genres": ",".join(st.session_state.get("genres_pills", [])),
+            "modus": ",".join(st.session_state.get("modus_pills", [])),
+        })
         st.query_params.pop("id", None)
+        st.session_state["came_from_detail"] = True
         st.rerun()
-
-    st.markdown('</div>', unsafe_allow_html=True)
 
 
     video_html = f"""<!DOCTYPE html>
@@ -109,8 +126,10 @@ if (Hls.isSupported()) {{
     steam_id = doc["steamId"][0]
 
 
-    html.append(f'<div class="column_l"><p class="bold">Genres:</p>{genre_html}<p class="bold">Publisher:</p>{publisher_html}<p class="bold">Available for platforms:</p>{platform_html}<p class="bold">Website:</p>{web_url}<p class="bold">Date:</p><p>{date}</p></div>')
-    html.append(f'<div class="column_r">{iframe}<p>{description}</p></div>')
+    html.append(f'<div class="column_l"><p class="bold">Title:</p><p>{title}</p><p class="bold">Genres:</p>{genre_html}<p class="bold">Publisher:</p>{publisher_html}<p class="bold">Available for platforms:</p>{platform_html}<p class="bold">Website:</p>{web_url}<p class="bold">Date:</p><p>{date}</p></div>')
+    html.append(f'<div class="column_r"><h1>{title}</h1>{iframe}<p>{description}</p></div>')
     html.append("</div>")
 
     st.markdown("".join(html), unsafe_allow_html=True)
+
+    st.markdown("""<footer>Wintersemster 2025/26 - Usability Engineering - Talena Thielecke, Smilla Hill</footer>""", unsafe_allow_html=True)
