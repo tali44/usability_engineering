@@ -1,6 +1,2 @@
-[theme]
-#backgroundColor = "black"
-#primaryColor = "red"
-
 [server]
 enableStaticServing = true
