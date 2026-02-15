@@ -19,7 +19,7 @@ if "optionen" not in st.session_state:
 
 
 page1 = st.Page("pages/home.py", title="Home")
-page2 = st.Page("pages/favs.py", title="Editor's picks")
+page2 = st.Page("pages/favs.py", title="Editor's Favorits")
 
 
 pages_config = {
