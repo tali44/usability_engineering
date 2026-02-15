@@ -63,7 +63,7 @@ if view == "detail" and selected_id:
 
 
 # Hauptseite
-st.title("Editor's picks")
+st.title("Editor's Favorites")
 
 ids = [5497, 7027, 5667, 8296, 6641, 127025, 58365, 60799, 9969, 10107]
 # Titel: SteamID (id)

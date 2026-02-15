@@ -19,7 +19,7 @@ if "optionen" not in st.session_state:
 
 
 page1 = st.Page("pages/home.py", title="Home")
-page2 = st.Page("pages/favs.py", title="Editor's picks")
+page2 = st.Page("pages/favs.py", title="Editor's Favorites")
 
 
 pages_config = {
@@ -32,6 +32,19 @@ st.set_page_config(layout="wide")
 st.markdown(css, unsafe_allow_html=True)
 
 st.markdown("""<div class="header_title">Videogames</div>""", unsafe_allow_html=True)
+
+with st.popover("Evaluation", width="content"):
+    st.markdown("""
+        <div style="width: 35vw; height: 80vh">
+            <iframe 
+                src="https://docs.google.com/forms/d/e/1FAIpQLSfqjkIZ-trBClutW2ZNTn4-Hn0CqJJtIZMZCbuRV7BlHE9p1g/viewform?embedded=true"
+                width="100%" 
+                height="100%" 
+                frameborder="0"
+                style="overflow:hidden;">
+            </iframe>
+        </div>
+    """, unsafe_allow_html=True)
 
 navigation = st.navigation(pages_config, position="top")
 navigation.run()

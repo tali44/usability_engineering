@@ -16,7 +16,7 @@
 }
 
 h1{
-  text-align: left;
+  text-align: center;
   font-size: 4em !important;
   margin-bottom: 50px !important;
 }
@@ -360,17 +360,24 @@ button[kind="header"]{
   z-index: 9999;
 }
 
-                                                      /* WISHLIST */
-.keinWunsch{
-  display: flex;
-  justify-content: center;
-  text-align: center;
-  background-color: #df0559;
-  border-radius: 10px;
-  width: 30%;
-  justify-self: center;
-  height: 32px;
-  line-height: 32px;
+                                                      /* POP UP EVALUATION */
+
+[data-testid="stPopoverBody"] {
+  max-height: 85vh !important; 
+  overflow-y: auto !important;
+}
+
+.stPopover {
+  position: absolute;
+  top: 10px;
+  left: 220px;
+  z-index: 9999;
+  width: fit-content;
+}
+
+[data-testid="stPopoverButton"]{
+  background-color: #0F2C4A;
+  border: none;
 }
 
 </style>
