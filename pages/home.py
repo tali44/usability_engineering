@@ -184,5 +184,3 @@ if q or selected_genres or selected_modus:
             cards_html.append(f'<div class="suche card">{card}</div>')
         cards_html.append("</div>")
         st.markdown("".join(cards_html), unsafe_allow_html=True)
-
-
