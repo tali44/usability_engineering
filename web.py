@@ -2,7 +2,8 @@ import streamlit as st
 
 
 st.set_page_config(
-    page_title="Videogames",
+    page_title="Steamerino",
+    page_icon="",
     layout="wide"
 )
 
@@ -31,7 +32,7 @@ with open("styles.html", "r") as f:
 st.set_page_config(layout="wide")
 st.markdown(css, unsafe_allow_html=True)
 
-st.markdown("""<div class="header_title">Videogames</div>""", unsafe_allow_html=True)
+st.markdown("""<div class="header_title">Steamerino</div>""", unsafe_allow_html=True)
 
 with st.popover("Evaluation", width="content"):
     st.markdown("""
