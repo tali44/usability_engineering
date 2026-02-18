@@ -182,7 +182,6 @@ if q or selected_genres or selected_modus:
             card = f'<div class="hover"><a href="{href}" target="_self">{img_tag}<div class="text"><div class="t">{title}</div>{extra}</div></a></div>'
 
             cards_html.append(f'<div class="suche card">{card}</div>')
-            print(title)
         cards_html.append("</div>")
         st.markdown("".join(cards_html), unsafe_allow_html=True)
 
